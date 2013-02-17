@@ -11,7 +11,7 @@ module RubyCAS
 
         def load!(file_name)
           config = YAML::load_file(file_name)
-          config = Hash[config.map{|(k,v)| [k.to_sym,v]}]
+          config = Hash.symbolize_keys(config)
           @_settings.merge!(config)
         end
 

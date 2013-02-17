@@ -19,12 +19,12 @@ describe RubyCAS::Server::Core do
 
     it "Verify database settings" do
       RubyCAS::Server::Core::Settings.database.should be_kind_of(Hash)
-      RubyCAS::Server::Core::Settings.database['adapter'].should eq("sqlite3")
+      RubyCAS::Server::Core::Settings.database[:adapter].should eq("sqlite3")
     end
 
     it "Verify log settings" do
       RubyCAS::Server::Core::Settings.log.should be_kind_of(Hash)
-      RubyCAS::Server::Core::Settings.log['level'].should eq("INFO")
+      RubyCAS::Server::Core::Settings.log[:level].should eq("INFO")
     end
 
   end
