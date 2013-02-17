@@ -1,0 +1,31 @@
+##### DATABASE #################################################################
+database:
+  adapter: sqlite3
+  database: casserver_spec.db
+
+#disable_auto_migrations: true
+
+##### LOGGING ##################################################################
+
+log:
+  file: /var/log/casserver.log
+  level: INFO
+
+
+#db_log:
+#  file: /var/log/casserver_db.log
+
+#quiet: true
+
+
+##### SINGLE SIGN-OUT ##########################################################
+
+#enable_single_sign_out: true
+
+##### OTHER ####################################################################
+
+maximum_unused_login_ticket_lifetime: 300
+maximum_unused_service_ticket_lifetime: 300
+
+maximum_session_lifetime: 172800
+downcase_username: true
