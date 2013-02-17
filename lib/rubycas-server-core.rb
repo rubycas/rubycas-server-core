@@ -1,6 +1,7 @@
 require "logger"
 require "rubycas-server-core/core_ext"
 require "rubycas-server-core/version"
+require "rubycas-server-core/authenticator"
 require "rubycas-server-core/settings"
 require "rubycas-server-core/database"
 $LOG = Logger.new(STDOUT)
