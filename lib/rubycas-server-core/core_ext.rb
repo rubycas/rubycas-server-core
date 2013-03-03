@@ -1,3 +1,7 @@
+require "rubycas-server-core/core_ext/string"
+
+String.send(:include, RubyCAS::Server::Core::String)
+
 class Hash
   # take keys of hash and transform those to a symbols
   def self.symbolize_keys(value)
