@@ -23,6 +23,8 @@ module RubyCAS
         R18n.set(Settings.default_locale)
         Database.setup(Settings.database)
       end
+
+      autoload :CredentialRequester, 'rubycas-server-core/credential_requester'
     end
   end
 end
