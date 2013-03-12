@@ -20,6 +20,8 @@ module RubyCAS
         Settings.load!(config_file)
         Database.setup(Settings.database)
       end
+
+      autoload :CredentialRequester, 'rubycas-server-core/credential_requester'
     end
   end
 end
