@@ -18,9 +18,17 @@ describe RubyCAS::Server::Core::Util do
       ticketed = Util.build_ticketed_url("#{service}?param=value", ticket)
       expect(ticketed).to eq("#{service}?param=value&ticket=#{ticket}")
     end
+
+    it 'must return an empty string when no service url is present' do
+      expect(Util.build_ticketed_url('', ticket)).to eq('')
+    end
   end
 
   describe '.clean_service_url' do
+    it 'must return an empty string when an empty value is passed' do
+      expect(Util.clean_service_url('')).to eq('')
+    end
+
     it 'must strip off a trailing ?' do
       cleaned = Util.clean_service_url('http://www.google.com?')
       expect(cleaned).to eq('http://www.google.com')

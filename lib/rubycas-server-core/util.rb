@@ -4,6 +4,7 @@ module RubyCAS::Server::Core
     extend self
 
     def build_ticketed_url(url, ticket)
+      return '' if url.blank?
       parsed = URI.parse(url)
       query = parsed.query.to_s
       params = query.split('&')
@@ -14,6 +15,7 @@ module RubyCAS::Server::Core
 
     PARAM_REGEX = /(?:service|gateway|renew|ticket)=[^&]+/
     def clean_service_url(dirty_url)
+      return '' if dirty_url.blank?
       parsed = URI.parse(dirty_url)
       query = parsed.query.to_s # we really only care about the query portion of the url
       query.gsub!(PARAM_REGEX, '')
