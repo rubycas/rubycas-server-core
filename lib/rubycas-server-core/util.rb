@@ -2,9 +2,15 @@ require 'uri'
 module RubyCAS::Server::Core
   module Util
     extend self
-    # TODO t.pickett66
-    #
-    # def build_ticketed_url(url, ticket); end
+
+    def build_ticketed_url(url, ticket)
+      parsed = URI.parse(url)
+      query = parsed.query.to_s
+      params = query.split('&')
+      params << "ticket=#{ticket}"
+      parsed.query = params.join('&')
+      parsed.to_s
+    end
 
     PARAM_REGEX = /(?:service|gateway|renew|ticket)=[^&]+/
     def clean_service_url(dirty_url)

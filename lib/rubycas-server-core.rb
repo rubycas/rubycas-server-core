@@ -24,6 +24,7 @@ module RubyCAS
         Database.setup(Settings.database)
       end
 
+      autoload :Util, 'rubycas-server-core/util'
       autoload :CredentialRequester, 'rubycas-server-core/credential_requester'
       autoload :Tickets, 'rubycas-server-core/tickets'
     end
