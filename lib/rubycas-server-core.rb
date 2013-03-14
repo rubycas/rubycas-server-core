@@ -23,6 +23,7 @@ module RubyCAS
 
       autoload :CredentialRequester, 'rubycas-server-core/credential_requester'
       autoload :Tickets, 'rubycas-server-core/tickets'
+      autoload :Util, 'rubycas-server-core/util'
     end
   end
 end
