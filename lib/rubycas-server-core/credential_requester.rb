@@ -8,7 +8,7 @@ module RubyCAS::Server::Core
 
     def process!(params = {}, cookies = {})
       tgt = cookies['tgt']
-      service = params['service']
+      service = Util.clean_service_url(params['service'])
       if tgt && Tickets.ticket_granting_ticket_valid?(tgt)
         st = Tickets.generate_service_ticket(service, tgt)
         target = Util.build_ticketed_url(service, st.ticket)

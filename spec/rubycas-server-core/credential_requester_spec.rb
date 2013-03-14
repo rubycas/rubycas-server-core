@@ -36,7 +36,6 @@ describe RubyCAS::Server::Core::CredentialRequester do
         RubyCAS::Server::Core::Tickets.stub(:generate_service_ticket).with(service, 'TGT-4321ABCD') {
           OpenStruct.new({ticket: st})
         }
-        RubyCAS::Server::Core::Util.should_receive(:build_ticketed_url).with(service, st).and_return("#{service}?ticket=#{st}")
 
         controller.should_receive(:user_logged_in).with("#{service}?ticket=#{st}")
       end
