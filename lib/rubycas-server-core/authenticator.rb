@@ -11,8 +11,8 @@ module RubyCAS
         # under @options and initializes @extra_attributes to an empty hash.
         def configure(options)
           raise ArgumentError, "options must be a Hash" unless options.kind_of? Hash
-          @options = Hash.symbolize_keys(options)
-          @extra_attributes = {}
+          @options = options.with_indifferent_access
+          @extra_attributes = HashWithIndifferentAccess.new
         end
 
         # Override this to implement your authentication credential validation.
