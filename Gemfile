@@ -14,4 +14,7 @@ end
 group :test do
   gem "rspec", "~> 2.13.0"
   gem "rake", "~> 10.0.3"
+
+  gem 'dm-sqlite-adapter'
+  gem 'rubycas-server-datamapper', :path => "../rubycas-server-datamapper/"
 end

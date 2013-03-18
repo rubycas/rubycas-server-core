@@ -29,3 +29,5 @@ maximum_unused_service_ticket_lifetime: 300
 
 maximum_session_lifetime: 172800
 downcase_username: true
+
+default_locale: en
