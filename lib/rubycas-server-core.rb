@@ -1,10 +1,14 @@
 require "logger"
 require "r18n-core"
+
 require "rubycas-server-core/core_ext"
 require "rubycas-server-core/version"
 require "rubycas-server-core/authenticator"
 require "rubycas-server-core/settings"
 require "rubycas-server-core/database"
+require "rubycas-server-core/util"
+require "rubycas-server-core/tickets"
+require "rubycas-server-core/credential_requester"
 $LOG = Logger.new(STDOUT)
 
 module RubyCAS
@@ -23,10 +27,6 @@ module RubyCAS
         R18n.set(Settings.default_locale)
         Database.setup(Settings.database)
       end
-
-      autoload :Util, 'rubycas-server-core/util'
-      autoload :CredentialRequester, 'rubycas-server-core/credential_requester'
-      autoload :Tickets, 'rubycas-server-core/tickets'
     end
   end
 end
