@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'debugger'
+require 'ostruct'
 require 'rubycas-server-core'
 
 RSpec.configure do |config|
