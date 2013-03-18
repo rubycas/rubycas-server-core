@@ -20,6 +20,5 @@ describe RubyCAS::Server::Core do
       RubyCAS::Server::Core::Settings.log.should be_kind_of(Hash)
       RubyCAS::Server::Core::Settings.log[:level].should eq("INFO")
     end
-
   end
 end

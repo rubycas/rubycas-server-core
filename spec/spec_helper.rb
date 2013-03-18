@@ -1,5 +1,11 @@
 require 'rubygems'
 require 'bundler/setup'
+begin
+  require 'debugger'
+rescue LoadError
+  puts 'Debugger not found! testing on CI?'
+end
+require 'ostruct'
 require 'rubycas-server-core'
 Bundler.require(:test)
 

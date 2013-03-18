@@ -1,15 +1,5 @@
+require 'active_support/core_ext/hash'
+require 'active_support/hash_with_indifferent_access'
 require "rubycas-server-core/core_ext/string"
 
 String.send(:include, RubyCAS::Server::Core::String)
-
-class Hash
-  # take keys of hash and transform those to a symbols
-  def self.symbolize_keys(value)
-    value.map!{|el| Hash.symbolize_keys(el)} if value.is_a?(Array)
-    return value if not value.is_a?(Hash)
-    hash = value.inject({}){|memo,(k,v)| memo[k.to_sym] =
-      Hash.symbolize_keys(v); memo}
-    return hash
-  end
-
-end

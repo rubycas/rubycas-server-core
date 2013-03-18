@@ -23,6 +23,10 @@ module RubyCAS
         R18n.set(Settings.default_locale)
         Database.setup(Settings.database)
       end
+
+      autoload :CredentialRequester, 'rubycas-server-core/credential_requester'
+      autoload :Tickets, 'rubycas-server-core/tickets'
+      autoload :Util, 'rubycas-server-core/util'
     end
   end
 end
