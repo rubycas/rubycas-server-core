@@ -1,6 +1,7 @@
 require 'securerandom'
 require "rubycas-server-core/adapters/in_memory/storage"
 require "rubycas-server-core/adapters/in_memory/login_ticket"
+require "rubycas-server-core/adapters/in_memory/ticket_granting_ticket"
 
 module RubyCAS
   module Server
