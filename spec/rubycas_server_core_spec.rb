@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe RubyCAS::Server::Core do
 
-  describe "Initialization" do
+  describe "Initialization", wip: true do
     before do
       RubyCAS::Server::Core.setup("spec/config/config.yml")
     end
