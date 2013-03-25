@@ -1,6 +1,6 @@
 rubycas-server-core
 ===================
-
+[![Build Status](https://travis-ci.org/rubycas/rubycas-server-core.png)](https://travis-ci.org/rubycas/rubycas-server-core)
 The core logic for handling CAS requests independent of any particular storage or web presentation technology.
 
 
