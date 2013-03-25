@@ -12,7 +12,7 @@ describe RubyCAS::Server::Core::CredentialRequester do
       RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
         OpenStruct.new({ticket: 'LT-123ABC'})
       }
-      controller.should_receive(:user_not_logged_in).with("LT-123ABC")
+      controller.should_receive(:user_not_logged_in).with("LT-123ABC", nil)
     end
 
     it 'must satisfy our expectations' do
@@ -45,10 +45,28 @@ describe RubyCAS::Server::Core::CredentialRequester do
       end
     end
 
-    describe 'with an expired session' do
-      # ensure session is destroyed
-      # generate/persist new login ticket
-      # send user_not_logged_in(ticket_string)
+    describe 'with an invalid session' do
+      let(:service) { 'https://service.test.com' }
+      let(:params) { {
+        'service' => service
+      } }
+      let(:cookies) { {
+        'tgt' => "TGT-4321ABCD"
+      } }
+      let(:message) { 'Error message' }
+
+      before do
+        RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with('TGT-4321ABCD').and_return([false, message])
+        RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
+          OpenStruct.new({ticket: 'LT-123ABC'})
+        }
+
+        controller.should_receive(:user_not_logged_in).with("LT-123ABC", message)
+      end
+
+      it 'must satisfy our expectations' do
+        subject.process!(params, cookies)
+      end
     end
   end
 

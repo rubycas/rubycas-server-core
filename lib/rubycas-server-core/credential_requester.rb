@@ -8,14 +8,17 @@ module RubyCAS::Server::Core
 
     def process!(params = {}, cookies = {})
       tgt = cookies['tgt']
+      tgt_valid, tgt_message = Tickets.ticket_granting_ticket_valid?(tgt) if tgt.present?
+
       service = Util.clean_service_url(params['service'])
-      if tgt && Tickets.ticket_granting_ticket_valid?(tgt)
+
+      if tgt && tgt_valid
         st = Tickets.generate_service_ticket(service, tgt)
         target = Util.build_ticketed_url(service, st.ticket)
         listener.user_logged_in(target)
       else
         ticket = Tickets.generate_login_ticket
-        listener.user_not_logged_in(ticket.ticket)
+        listener.user_not_logged_in(ticket.ticket, tgt_message)
       end
     end
   end
