@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rubycas-server-core'
+require 'rubycas-server-core/adapters/in_memory'
 Bundler.require(:test)
 
 RSpec.configure do |config|
