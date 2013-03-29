@@ -4,7 +4,8 @@ gemspec
 group :development do
   # for gems that are nice in development
   # but don't break the build when missing
-  # Example: deubgger
+  # Example: debugger
+  gem 'debugger'
 end
 
 group :test do

@@ -2,6 +2,11 @@ require 'rubygems'
 require 'bundler/setup'
 require 'rubycas-server-core'
 require 'rubycas-server-core/adapters/in_memory'
+begin
+  require 'debugger'
+rescue LoadError
+  puts "Debugger couldn't be loaded, running in CI?"
+end
 Bundler.require(:test)
 
 RSpec.configure do |config|
