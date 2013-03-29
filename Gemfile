@@ -6,6 +6,12 @@ group :development do
   # but don't break the build when missing
   # Example: debugger
   gem 'debugger'
+  gem "guard"
+  gem "guard-rspec"
+
+  gem 'rb-inotify', :require => false
+  gem 'rb-fsevent', :require => false
+  gem 'rb-fchange', :require => false
 end
 
 group :test do
