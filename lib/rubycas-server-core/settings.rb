@@ -1,4 +1,6 @@
 require 'yaml'
+require 'active_support/core_ext/hash'
+require 'active_support/hash_with_indifferent_access'
 
 module RubyCAS
   module Server
@@ -6,12 +8,11 @@ module RubyCAS
       module Settings
         extend self
 
-        @_settings = {}
+        @_settings = HashWithIndifferentAccess.new
         attr_reader :_settings
 
         def load!(file_name)
-          config = YAML::load_file(file_name)
-          config = Hash.symbolize_keys(config)
+          config = YAML::load_file(file_name).with_indifferent_access
           @_settings.merge!(config)
         end
 
