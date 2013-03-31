@@ -5,6 +5,9 @@ require "rubycas-server-core/authenticator"
 require "rubycas-server-core/settings"
 require "rubycas-server-core/database"
 require "rubycas-server-core/util"
+require "rubycas-server-core/tickets"
+require "rubycas-server-core/tickets/validations"
+
 $LOG = Logger.new(STDOUT)
 
 module RubyCAS
