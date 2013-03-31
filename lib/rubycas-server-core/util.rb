@@ -1,4 +1,6 @@
 require 'uri'
+require 'securerandom'
+
 module RubyCAS::Server::Core
   module Util
     extend self
@@ -24,6 +26,10 @@ module RubyCAS::Server::Core
       query.gsub!(/^&/, '')
       parsed.query = query.empty? ? nil : query
       parsed.to_s
+    end
+
+    def random_string(length = 29)
+      SecureRandom.urlsafe_base64(length)[0..length-1]
     end
   end
 end

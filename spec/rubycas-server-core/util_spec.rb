@@ -58,4 +58,25 @@ describe RubyCAS::Server::Core::Util do
       expect(cleaned).to eq('http://www.google.com?something=booyah&param=value')
     end
   end
+
+  describe '.random(length = 29' do
+    context 'when max length is not passed in' do
+      it 'should return a random string of length 29' do
+        Util.random_string.length.should == 29
+      end
+    end
+
+    context 'when max length is passed in' do
+      it 'should return a random string of the desired length' do
+        Util.random_string(30).length.should == 30
+        (Util.random_string(30) =~ /(\w|-){29}/).should eq(0)
+      end
+    end
+
+    it 'should return a random string' do
+      random_string = Util.random_string
+      another_random_string = Util.random_string
+      random_string.should_not == another_random_string
+    end
+  end
 end
