@@ -1,7 +1,7 @@
 module RubyCAS
   module Server
     module Core
-      module CAS
+      module Tickets
         class Storage
           class << self
             attr_accessor :storage

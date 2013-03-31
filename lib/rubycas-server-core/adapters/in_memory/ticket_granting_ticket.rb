@@ -1,7 +1,7 @@
 module RubyCAS
   module Server
     module Core
-      module CAS
+      module Tickets
         class TicketGrantingTicket < Storage
           attr_accessor :id, :ticket, :client_hostname, :username,
                         :extra_attributes, :service_tickets, :proxy_tickets,

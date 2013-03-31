@@ -1,7 +1,7 @@
 module RubyCAS
   module Server
     module Core
-      module CAS
+      module Tickets
         class ServiceTicket < Storage
 
           attr_accessor :id, :ticket, :consumed, :client_hostname,

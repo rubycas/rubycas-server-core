@@ -1,7 +1,7 @@
 module RubyCAS
   module Server
     module Core
-      module CAS
+      module Tickets
         class ProxyTicket < Storage
 
           attr_accessor :id, :ticket, :service, :consumed, :client_hostname,
