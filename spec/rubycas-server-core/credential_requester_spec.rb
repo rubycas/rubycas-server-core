@@ -147,5 +147,38 @@ describe RubyCAS::Server::Core::CredentialRequester do
     end
   end
 
-    # renew param
+  describe 'with renew param set' do
+    let(:params) { {
+      'renew' => true,
+      'service' => service
+    } }
+    let(:cookies) { {
+      'tgt' => tgt
+    } }
+
+    before do
+      RubyCAS::Server::Core::Tickets.stub(:ticket_granting_ticket_valid?).with(tgt).and_return(true)
+      RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
+        OpenStruct.new({ticket: lt})
+      }
+      controller.should_receive(:user_not_logged_in).with(lt, nil)
+    end
+
+    it 'must satisfy our expectations' do
+      subject.process!(params, cookies)
+    end
+
+    describe 'and the gateway param set' do
+      # force renew any way
+      let(:params) { {
+        'renew' => true,
+        'gateway' => true,
+        'service' => service
+      } }
+
+      it 'must satisfy our expectations' do
+        subject.process!(params, cookies)
+      end
+    end
+  end
 end

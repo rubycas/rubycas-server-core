@@ -12,7 +12,10 @@ module RubyCAS::Server::Core
 
       service = Util.clean_service_url(params['service'])
 
-      if params['gateway'] && service.present? # allow any truthy value for gateway
+      if params['renew']
+        ticket = Tickets.generate_login_ticket
+        listener.user_not_logged_in(ticket.ticket, tgt_message)
+      elsif params['gateway'] && service.present? # allow any truthy value for gateway
         if tgt && tgt_valid
           st = Tickets.generate_service_ticket(service, tgt)
           target = Util.build_ticketed_url(service, st.ticket)
