@@ -6,7 +6,6 @@ describe RubyCAS::Server::Core::CredentialRequester do
 
   let(:service) { 'https://service.test.com' }
 
-  let(:lt) { 'LT-123ABC' }
   let(:tgt) { 'TGT-4321ABCD' }
   let(:st) { 'ST-1234DCBA' }
 
@@ -17,10 +16,7 @@ describe RubyCAS::Server::Core::CredentialRequester do
     let(:cookies) { {} }
 
     before do
-      RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
-        OpenStruct.new({ticket: lt})
-      }
-      controller.should_receive(:user_not_logged_in).with(lt, nil)
+      controller.should_receive(:user_not_logged_in).with(/^LT-\w+/, nil)
     end
 
     it 'must satisfy our expectations' do
@@ -61,11 +57,8 @@ describe RubyCAS::Server::Core::CredentialRequester do
 
       before do
         RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with(tgt).and_return([false, message])
-        RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
-          OpenStruct.new({ticket: lt})
-        }
 
-        controller.should_receive(:user_not_logged_in).with(lt, message)
+        controller.should_receive(:user_not_logged_in).with(/^LT-\w+/, message)
       end
 
       it 'must satisfy our expectations' do
@@ -135,10 +128,8 @@ describe RubyCAS::Server::Core::CredentialRequester do
       before do
         # the tgt status here doesn't matter
         RubyCAS::Server::Core::Tickets.stub(:ticket_granting_ticket_valid?).with(tgt).and_return(true)
-        RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
-          OpenStruct.new({ticket: lt})
-        }
-        controller.should_receive(:user_not_logged_in).with(lt, nil)
+
+        controller.should_receive(:user_not_logged_in).with(/^LT-\w+/, nil)
       end
 
       it 'must satisfy our expectations' do
@@ -158,10 +149,8 @@ describe RubyCAS::Server::Core::CredentialRequester do
 
     before do
       RubyCAS::Server::Core::Tickets.stub(:ticket_granting_ticket_valid?).with(tgt).and_return(true)
-      RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
-        OpenStruct.new({ticket: lt})
-      }
-      controller.should_receive(:user_not_logged_in).with(lt, nil)
+
+      controller.should_receive(:user_not_logged_in).with(/^LT-\w+/, nil)
     end
 
     it 'must satisfy our expectations' do
