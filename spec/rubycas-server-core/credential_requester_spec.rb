@@ -4,15 +4,23 @@ describe RubyCAS::Server::Core::CredentialRequester do
   let(:controller) { double("Controller") }
   subject { described_class.new(controller) }
 
+  let(:service) { 'https://service.test.com' }
+
+  let(:lt) { 'LT-123ABC' }
+  let(:tgt) { 'TGT-4321ABCD' }
+  let(:st) { 'ST-1234DCBA' }
+
+  let(:message) { 'Error message' }
+
   describe 'new login' do
     let(:params) { {} }
     let(:cookies) { {} }
 
     before do
       RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
-        OpenStruct.new({ticket: 'LT-123ABC'})
+        OpenStruct.new({ticket: lt})
       }
-      controller.should_receive(:user_not_logged_in).with("LT-123ABC", nil)
+      controller.should_receive(:user_not_logged_in).with(lt, nil)
     end
 
     it 'must satisfy our expectations' do
@@ -22,18 +30,16 @@ describe RubyCAS::Server::Core::CredentialRequester do
 
   describe 'already logged in' do
     describe 'with a valid session' do
-      let(:service) { 'https://service.test.com' }
-      let(:st) { 'ST-1234DCBA' }
       let(:params) { {
         'service' => service
       } }
       let(:cookies) { {
-        'tgt' => "TGT-4321ABCD"
+        'tgt' => tgt
       } }
 
       before do
-        RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with('TGT-4321ABCD').and_return(true)
-        RubyCAS::Server::Core::Tickets.stub(:generate_service_ticket).with(service, 'TGT-4321ABCD') {
+        RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with(tgt).and_return(true)
+        RubyCAS::Server::Core::Tickets.stub(:generate_service_ticket).with(service, tgt) {
           OpenStruct.new({ticket: st})
         }
 
@@ -46,22 +52,20 @@ describe RubyCAS::Server::Core::CredentialRequester do
     end
 
     describe 'with an invalid session' do
-      let(:service) { 'https://service.test.com' }
       let(:params) { {
         'service' => service
       } }
       let(:cookies) { {
-        'tgt' => "TGT-4321ABCD"
+        'tgt' => tgt
       } }
-      let(:message) { 'Error message' }
 
       before do
-        RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with('TGT-4321ABCD').and_return([false, message])
+        RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with(tgt).and_return([false, message])
         RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
-          OpenStruct.new({ticket: 'LT-123ABC'})
+          OpenStruct.new({ticket: lt})
         }
 
-        controller.should_receive(:user_not_logged_in).with("LT-123ABC", message)
+        controller.should_receive(:user_not_logged_in).with(lt, message)
       end
 
       it 'must satisfy our expectations' do
@@ -71,20 +75,18 @@ describe RubyCAS::Server::Core::CredentialRequester do
   end
 
   describe 'with gateway param set to true' do
-    let(:service) { 'https://service.test.com' }
     let(:params) { {
       'service' => service,
       'gateway' => true
     } }
     let(:cookies) { {
-      'tgt' => "TGT-4321ABCD"
+      'tgt' => tgt
     } }
-    let(:st) { 'ST-1234DCBA' }
 
     describe 'with a valid session' do
       before do
-        RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with('TGT-4321ABCD').and_return(true)
-        RubyCAS::Server::Core::Tickets.stub(:generate_service_ticket).with(service, 'TGT-4321ABCD') {
+        RubyCAS::Server::Core::Tickets.should_receive(:ticket_granting_ticket_valid?).with(tgt).and_return(true)
+        RubyCAS::Server::Core::Tickets.stub(:generate_service_ticket).with(service, tgt) {
           OpenStruct.new({ticket: st})
         }
 
@@ -97,12 +99,10 @@ describe RubyCAS::Server::Core::CredentialRequester do
     end
 
     describe 'with an invalid session' do
-      let(:message) { 'Error message' }
-
       before do
         RubyCAS::Server::Core::Tickets.
           stub(:ticket_granting_ticket_valid?).
-          with('TGT-4321ABCD').
+          with(tgt).
           and_return(false, message)
 
         controller.should_receive(:user_logged_in).with("#{service}")
@@ -134,11 +134,11 @@ describe RubyCAS::Server::Core::CredentialRequester do
 
       before do
         # the tgt status here doesn't matter
-        RubyCAS::Server::Core::Tickets.stub(:ticket_granting_ticket_valid?).with('TGT-4321ABCD').and_return(true)
+        RubyCAS::Server::Core::Tickets.stub(:ticket_granting_ticket_valid?).with(tgt).and_return(true)
         RubyCAS::Server::Core::Tickets.stub(:generate_login_ticket) {
-          OpenStruct.new({ticket: 'LT-123ABC'})
+          OpenStruct.new({ticket: lt})
         }
-        controller.should_receive(:user_not_logged_in).with("LT-123ABC", nil)
+        controller.should_receive(:user_not_logged_in).with(lt, nil)
       end
 
       it 'must satisfy our expectations' do
