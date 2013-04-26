@@ -1,7 +1,5 @@
 require "logger"
 require "r18n-core"
-
-require "rubycas-server-core/core_ext"
 require "rubycas-server-core/version"
 require "rubycas-server-core/authenticator"
 require "rubycas-server-core/settings"
@@ -9,6 +7,8 @@ require "rubycas-server-core/database"
 require "rubycas-server-core/util"
 require "rubycas-server-core/tickets"
 require "rubycas-server-core/credential_requester"
+require "rubycas-server-core/tickets/validations"
+
 $LOG = Logger.new(STDOUT)
 
 module RubyCAS
@@ -25,6 +25,7 @@ module RubyCAS
         Settings.load!(config_file)
         R18n.default_places = '../locales'
         R18n.set(Settings.default_locale)
+        $LOG.level = Settings.log[:level] || Logger::ERROR
         Database.setup(Settings.database)
       end
     end
