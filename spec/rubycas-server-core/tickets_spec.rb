@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe RubyCAS::Server::Core::Tickets do
+describe RubyCAS::Server::Core::Tickets, wip: true do
   before do
    RubyCAS::Server::Core.setup("spec/config/config.yml")
    klass = Class.new {
