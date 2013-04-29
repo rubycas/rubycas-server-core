@@ -4,10 +4,11 @@ gemspec
 group :development do
   # for gems that are nice in development
   # but don't break the build when missing
-  # Example: debugger
+  # Example: deubgger
   gem 'debugger'
-  gem "guard"
-  gem "guard-rspec"
+
+  gem "guard", "~> 1.6.2"
+  gem "guard-rspec", "~> 2.5.0"
 
   gem 'rb-inotify', :require => false
   gem 'rb-fsevent', :require => false
