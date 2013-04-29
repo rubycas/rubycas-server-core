@@ -18,6 +18,8 @@ module RubyCAS::Server::Core::Tickets
     def initialize(attributes = {})
       set_attributes(attributes)
       set_ticket_string
+      @created_at ||= Time.now
+      @times_used ||= 0
     end
 
     def expiration_policy

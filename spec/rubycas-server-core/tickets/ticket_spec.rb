@@ -31,6 +31,27 @@ module RubyCAS::Server::Core::Tickets
         Ticket.instance_variable_set(:@ticket_prefix, nil)
         expect{ Ticket.new }.to raise_error Ticket::TicketPrefixNotSet
       end
+
+      it 'must set created_at if not present in attributes hash' do
+        ticket = Ticket.new
+        ticket.created_at.should_not be_nil
+      end
+
+      it 'must use created_at if present in attributes hash' do
+        time = Time.local(2013, 1, 2, 13, 26)
+        ticket = Ticket.new(created_at: time)
+        ticket.created_at.should == time
+      end
+
+      it 'must set times_used if not present in the attributes hash' do
+        ticket = Ticket.new
+        ticket.times_used.should == 0
+      end
+
+      it 'must use times_used if present in the attributes hash' do
+        ticket = Ticket.new(times_used: 3)
+        ticket.times_used.should == 3
+      end
     end
 
     describe '#save' do
