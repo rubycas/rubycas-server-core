@@ -1,7 +1,7 @@
 require "spec_helper"
 
 module RubyCAS::Server::Core
-  describe RubyCAS::Server::Core::Tickets, focus: true do
+  describe RubyCAS::Server::Core::Tickets do
     let(:client_hostname) { 'myhost.test' }
     let(:username) { 'myuser' }
     let(:service) { 'https://myservice.test' }
