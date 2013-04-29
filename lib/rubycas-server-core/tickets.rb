@@ -1,5 +1,5 @@
 require 'rubycas-server-core/util'
-%w{login_ticket}.each do |ticket_type|
+%w{login_ticket ticket_granting_ticket}.each do |ticket_type|
   require_relative "tickets/#{ticket_type}"
 end
 
