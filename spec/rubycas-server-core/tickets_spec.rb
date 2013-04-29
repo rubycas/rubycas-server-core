@@ -46,13 +46,14 @@ module RubyCAS::Server::Core
       let(:tgt_string) { 'TGT-ABCD1234' }
       let(:tgt) { Tickets::TicketGrantingTicket.new }
 
-      before do
+      it 'must satisfy our expectations' do
         Persistence.should_receive(:load_tgt).with(tgt_string).and_return(tgt)
         tgt.should_receive(:valid?).and_return(true)
+        Tickets.ticket_granting_ticket_valid?(tgt_string)
       end
 
-      it 'must satisfy our expectations' do
-        Tickets.ticket_granting_ticket_valid?(tgt_string)
+      it 'must raise an error if no ticket is specified' do
+        expect{ Tickets.ticket_granting_ticket_valid?('') }.to raise_error ArgumentError
       end
     end
 
