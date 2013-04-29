@@ -1,3 +1,6 @@
+require 'active_support/core_ext/hash'
+require 'active_support/hash_with_indifferent_access'
+
 module RubyCAS::Server::Core
   module Persistence
     class AdapterNotRegisteredError < StandardError; end
