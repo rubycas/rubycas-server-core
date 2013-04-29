@@ -42,15 +42,20 @@ module RubyCAS
           end
         end
 
-        def self.ticket_granting_ticket_valid?(tgt_string)
-          $LOG.debug "Validating ticket granting ticket '#{tgt_string}'"
-          if tgt_string.blank?
-            $LOG.debug "No ticket granting ticket given."
-            raise ArgumentError.new("No ticket string supplied for validation")
-          end
+        class << self
+          %w{login_ticket service_ticket ticket_granting_ticket}.each do |ticket_type|
+            define_method "#{ticket_type}_valid?" do |ticket_string|
+              $LOG.debug "Validating #{ticket_type.gsub(/_/, ' ')} '#{ticket_string}'"
 
-          tgt = Persistence.load_tgt(tgt_string)
-          tgt.valid?
+              if ticket_string.blank?
+                $LOG.debug "No ticket."
+                raise ArgumentError.new("No ticket string supplied for validation")
+              else
+                ticket = Persistence.public_send("load_#{ticket_type}", ticket_string)
+                ticket.valid?
+              end
+            end
+          end
         end
 
         def self.generate_service_ticket(service, tgt)
