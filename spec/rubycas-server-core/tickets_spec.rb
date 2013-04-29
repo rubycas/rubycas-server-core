@@ -57,28 +57,20 @@ module RubyCAS::Server::Core
       end
     end
 
-    describe ".generate_service_ticket(service, username, tgt)" do
-      let(:tgt) { Tickets.generate_ticket_granting_ticket(username, client_hostname) }
-      let(:st) { Tickets.generate_service_ticket(service, username, tgt, client_hostname) }
-
-      it "should return a ServiceTicket" do
-        st.class.should == Tickets::ServiceTicket
-      end
+    describe ".generate_service_ticket(service, tgt)" do
+      let(:tgt) {
+        tgt = Tickets.generate_ticket_granting_ticket(username, client_hostname)
+        tgt.id = rand(100_000)
+        tgt
+      }
+      let(:st) { Tickets.generate_service_ticket(service, tgt) }
 
       it "should not include the service identifer in the ticket string" do
         st.ticket.should_not match /#{service}/
       end
 
-      it "should not mark the ST as consumed" do
-        st.consumed.should be_nil
-      end
-
-      it "must generate a ticket that starts with 'ST-'" do
-        st.ticket.should match /^ST-/
-      end
-
       it "should assoicate the ST with the supplied TGT" do
-        st.ticket_granting_ticket.id.should == tgt.id
+        st.ticket_granting_ticket_id.should == tgt.id
       end
     end
 

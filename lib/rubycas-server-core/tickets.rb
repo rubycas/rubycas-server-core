@@ -1,5 +1,5 @@
 require 'rubycas-server-core/util'
-%w{login_ticket ticket_granting_ticket}.each do |ticket_type|
+%w{login_ticket ticket_granting_ticket service_ticket}.each do |ticket_type|
   require_relative "tickets/#{ticket_type}"
 end
 
@@ -53,16 +53,14 @@ module RubyCAS
           tgt.valid?
         end
 
-        def self.generate_service_ticket(service, username, tgt, client)
-          st = ServiceTicket.new
-          st.ticket = "ST-" + Util.random_string
-          st.service = service
-          st.username = username
-          st.ticket_granting_ticket = tgt
-          st.client_hostname = client
+        def self.generate_service_ticket(service, tgt)
+          st = ServiceTicket.new({
+            service: service,
+            ticket_granting_ticket_id: tgt.id
+          })
           if st.save
             $LOG.debug("Generated service ticket '#{st.ticket}' for service '#{st.service}'" +
-              " for user '#{st.username}' at '#{st.client_hostname}'")
+              " for user '#{tgt.username}' at '#{tgt.client_hostname}'")
             return st
           else
             return nil
