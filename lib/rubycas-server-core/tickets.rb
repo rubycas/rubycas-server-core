@@ -24,7 +24,7 @@ module RubyCAS
         # The optional 'extra_attributes' parameter takes a hash of additional attributes
         # that will be sent along with the username in the CAS response to subsequent
         # validation requests from clients.
-        def generate_ticket_granting_ticket(username, client, extra_attributes = {})
+        def self.generate_ticket_granting_ticket(username, client, extra_attributes = {})
           tgt = TicketGrantingTicket.new
           tgt.ticket = "TGC-" + Util.random_string
           tgt.username = username

@@ -3,6 +3,7 @@ require "spec_helper"
 module RubyCAS::Server::Core
   describe RubyCAS::Server::Core::Tickets do
     let(:client_hostname) { 'myhost.test' }
+    let(:username) { 'myuser' }
 
     before do
       RubyCAS::Server::Core.setup("spec/config/config.yml")
@@ -13,7 +14,7 @@ module RubyCAS::Server::Core
       @client_hostname = "myhost.test"
     end
 
-    describe '.generate_login_ticket(client_hostname)', focus: true do
+    describe '.generate_login_ticket(client_hostname)' do
       let(:lt) { Tickets.generate_login_ticket(client_hostname) }
 
       it "should return a login ticket" do
@@ -37,33 +38,28 @@ module RubyCAS::Server::Core
       end
     end
 
-    describe "#generate_ticket_granting_ticket(username, extra_attributes = {})" do
-      before do
-        @username = 'myuser'
-        @client_hostname = "myhost.test"
-        @tgt = @cas.generate_ticket_granting_ticket(@username, @client_hostname)
-      end
+    describe ".generate_ticket_granting_ticket(username, extra_attributes = {})" do
+      let(:tgt) { Tickets.generate_ticket_granting_ticket(username, client_hostname) }
 
       it "should return a TicketGrantingTicket" do
-        @tgt.class.should == Tickets::TicketGrantingTicket
+        tgt.class.should == Tickets::TicketGrantingTicket
       end
 
       it "should set the tgt's ticket string" do
-        @tgt.ticket.should_not be_nil
+        tgt.ticket.should_not be_nil
       end
 
       it "should generate a ticket string starting with 'TGC'" do
-        @tgt.ticket.should match /^TGC/
+        tgt.ticket.should match /^TGC/
       end
 
       it "should set the tgt's username string" do
-        @tgt.username.should == @username
+        tgt.username.should == username
       end
 
       it "should set the tgt's client_hostname" do
-        @tgt.client_hostname.should == @client_hostname
+        tgt.client_hostname.should == client_hostname
       end
-
     end
 
     describe "#generate_service_ticket(service, username, tgt)" do
