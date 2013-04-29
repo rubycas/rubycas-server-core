@@ -6,12 +6,12 @@ module RubyCAS::Server::Core
     let(:username) { 'myuser' }
     let(:service) { 'https://myservice.test' }
 
+    before do
+      Persistence.stub(:save_ticket).and_return(true)
+    end
+
     describe '.generate_login_ticket(client_hostname)' do
       let(:lt) { Tickets.generate_login_ticket(client_hostname) }
-
-      before do
-        Persistence.stub(:save_ticket).and_return(true)
-      end
 
       it "should set the client_hostname" do
         lt.client_hostname.should == client_hostname
