@@ -1,19 +1,10 @@
 require "spec_helper"
 
 module RubyCAS::Server::Core
-  describe RubyCAS::Server::Core::Tickets do
+  describe RubyCAS::Server::Core::Tickets, focus: true do
     let(:client_hostname) { 'myhost.test' }
     let(:username) { 'myuser' }
     let(:service) { 'https://myservice.test' }
-
-    before do
-      RubyCAS::Server::Core.setup("spec/config/config.yml")
-      klass = Class.new {
-        include RubyCAS::Server::Core::Tickets
-      }
-      @cas = klass.new
-      @client_hostname = "myhost.test"
-    end
 
     describe '.generate_login_ticket(client_hostname)' do
       let(:lt) { Tickets.generate_login_ticket(client_hostname) }
@@ -60,6 +51,20 @@ module RubyCAS::Server::Core
 
       it "should set the tgt's client_hostname" do
         tgt.client_hostname.should == client_hostname
+      end
+    end
+
+    describe '.ticket_granting_ticket_valid?(tgt_string)' do
+      let(:tgt_string) { 'TGT-ABCD1234' }
+      let(:tgt) { Tickets::TicketGrantingTicket.new }
+
+      before do
+        Persistence.should_receive(:load_tgt).with(tgt_string).and_return(tgt)
+        tgt.should_receive(:valid?).and_return(true)
+      end
+
+      it 'must satisfy our expectations' do
+        Tickets.ticket_granting_ticket_valid?(tgt_string)
       end
     end
 

@@ -40,6 +40,11 @@ module RubyCAS
           end
         end
 
+        def self.ticket_granting_ticket_valid?(tgt_string)
+          tgt = Persistence.load_tgt(tgt_string)
+          tgt.valid?
+        end
+
         def self.generate_service_ticket(service, username, tgt, client)
           st = ServiceTicket.new
           st.ticket = "ST-" + Util.random_string
