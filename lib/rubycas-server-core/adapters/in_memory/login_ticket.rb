@@ -2,7 +2,7 @@ module RubyCAS
   module Server
     module Core
       module Tickets
-        class LoginTicket < Storage
+        class DepLoginTicket < Storage
           attr_accessor :id, :ticket, :consumed, :client_hostname,
                       :created_at, :updated_at
 
