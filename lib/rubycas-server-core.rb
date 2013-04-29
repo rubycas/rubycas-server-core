@@ -24,7 +24,7 @@ module RubyCAS
         Settings.load!(config_file)
         R18n.default_places = '../locales'
         R18n.set(Settings.default_locale)
-        $LOG.level = Settings.log[:level] || Logger::ERROR
+        $LOG.level = Logger.const_get(Settings.log[:level]) || Logger::ERROR
         Database.setup(Settings.database)
       end
     end
