@@ -27,11 +27,11 @@ module RubyCAS
         # that will be sent along with the username in the CAS response to subsequent
         # validation requests from clients.
         def self.generate_ticket_granting_ticket(username, client, extra_attributes = {})
-          tgt = TicketGrantingTicket.new
-          tgt.ticket = "TGC-" + Util.random_string
-          tgt.username = username
-          tgt.extra_attributes = extra_attributes
-          tgt.client_hostname = client
+          tgt = TicketGrantingTicket.new({
+            username: username,
+            extra_attributes: extra_attributes,
+            client_hostname: client
+          })
           if tgt.save
             $LOG.debug("Generated ticket granting ticket '#{tgt.ticket}' for user" +
               " '#{tgt.username}' at '#{tgt.client_hostname}'" +
