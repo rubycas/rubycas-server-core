@@ -43,6 +43,12 @@ module RubyCAS
         end
 
         def self.ticket_granting_ticket_valid?(tgt_string)
+          $LOG.debug "Validating ticket granting ticket '#{tgt_string}'"
+          if tgt_string.blank?
+            $LOG.debug "No ticket granting ticket given."
+            raise ArgumentError.new("No ticket string supplied for validation")
+          end
+
           tgt = Persistence.load_tgt(tgt_string)
           tgt.valid?
         end
