@@ -40,7 +40,7 @@ module RubyCAS
           end
         end
 
-        def generate_service_ticket(service, username, tgt, client)
+        def self.generate_service_ticket(service, username, tgt, client)
           st = ServiceTicket.new
           st.ticket = "ST-" + Util.random_string
           st.service = service
