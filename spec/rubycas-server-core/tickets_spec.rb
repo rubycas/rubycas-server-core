@@ -47,7 +47,7 @@ module RubyCAS::Server::Core
       let(:tgt) { Tickets::TicketGrantingTicket.new }
 
       it 'must satisfy our expectations' do
-        Persistence.should_receive(:load_tgt).with(tgt_string).and_return(tgt)
+        Persistence.should_receive(:load_ticket_granting_ticket).with(tgt_string).and_return(tgt)
         tgt.should_receive(:valid?).and_return(true)
         Tickets.ticket_granting_ticket_valid?(tgt_string)
       end
