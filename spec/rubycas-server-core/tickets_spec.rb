@@ -2,6 +2,8 @@ require "spec_helper"
 
 module RubyCAS::Server::Core
   describe RubyCAS::Server::Core::Tickets do
+    let(:client_hostname) { 'myhost.test' }
+
     before do
       RubyCAS::Server::Core.setup("spec/config/config.yml")
       klass = Class.new {
@@ -11,31 +13,27 @@ module RubyCAS::Server::Core
       @client_hostname = "myhost.test"
     end
 
-    Tickets = RubyCAS::Server::Core::Tickets
-
-    describe "login ticket object" do
-      before do
-        @lt = @cas.generate_login_ticket(@client_hostname)
-      end
+    describe '.generate_login_ticket(client_hostname)', focus: true do
+      let(:lt) { Tickets.generate_login_ticket(client_hostname) }
 
       it "should return a login ticket" do
-        @lt.class.should == Tickets::LoginTicket
+        lt.class.should == Tickets::LoginTicket
       end
 
       it "should set the client_hostname" do
-        @lt.client_hostname.should == @client_hostname
+        lt.client_hostname.should == client_hostname
       end
 
       it "should set the ticket string" do
-        @lt.ticket.should_not be_nil
+        lt.ticket.should_not be_nil
       end
 
       it "should set the ticket string starting with 'LT'" do
-        @lt.ticket.should match /^LT/
+        lt.ticket.should match /^LT/
       end
 
       it "should not mark the ticket as consumed" do
-        @lt.consumed.should be_nil
+        lt.consumed.should be_nil
       end
     end
 

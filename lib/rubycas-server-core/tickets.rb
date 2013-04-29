@@ -6,7 +6,7 @@ module RubyCAS
       module Tickets
 
         # One time login ticket for given client
-        def generate_login_ticket(client)
+        def self.generate_login_ticket(client)
           lt = LoginTicket.new
           lt.ticket = "LT-" + Util.random_string
           lt.client_hostname = client
