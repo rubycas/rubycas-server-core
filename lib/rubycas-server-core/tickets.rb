@@ -1,4 +1,7 @@
 require 'rubycas-server-core/util'
+%w{login_ticket}.each do |ticket_type|
+  require_relative "tickets/#{ticket_type}"
+end
 
 module RubyCAS
   module Server
@@ -8,7 +11,6 @@ module RubyCAS
         # One time login ticket for given client
         def self.generate_login_ticket(client)
           lt = LoginTicket.new
-          lt.ticket = "LT-" + Util.random_string
           lt.client_hostname = client
           if lt.save
             $LOG.debug("Login ticket '#{lt.ticket} has been created for '#{lt.client_hostname}'")

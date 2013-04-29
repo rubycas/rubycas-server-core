@@ -9,24 +9,12 @@ module RubyCAS::Server::Core
     describe '.generate_login_ticket(client_hostname)' do
       let(:lt) { Tickets.generate_login_ticket(client_hostname) }
 
-      it "should return a login ticket" do
-        lt.class.should == Tickets::LoginTicket
+      before do
+        Persistence.stub(:save_ticket).and_return(true)
       end
 
       it "should set the client_hostname" do
         lt.client_hostname.should == client_hostname
-      end
-
-      it "should set the ticket string" do
-        lt.ticket.should_not be_nil
-      end
-
-      it "should set the ticket string starting with 'LT'" do
-        lt.ticket.should match /^LT/
-      end
-
-      it "should not mark the ticket as consumed" do
-        lt.consumed.should be_nil
       end
     end
 
