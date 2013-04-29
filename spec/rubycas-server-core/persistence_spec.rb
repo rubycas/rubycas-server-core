@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module RubyCAS::Server::Core
-  describe Persistence, focus: true do
+  describe Persistence do
     let(:name) { :awesome_adapter }
     let(:klass) { double }
 

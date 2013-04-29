@@ -25,7 +25,7 @@ module RubyCAS
         R18n.default_places = '../locales'
         R18n.set(Settings.default_locale)
         $LOG.level = Logger.const_get(Settings.log[:level]) || Logger::ERROR
-        Database.setup(Settings.database)
+        Persistence.setup(Settings.database)
       end
     end
   end
