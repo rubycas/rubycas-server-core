@@ -46,5 +46,25 @@ module RubyCAS::Server::Core::Tickets
         ticket.save
       end
     end
+
+    describe '#valid?' do
+      let(:policy) { double }
+      let(:ticket) {
+        klass = Class.new(Ticket) {
+          @ticket_prefix = 'ANON'
+        }
+        klass.new
+      }
+
+      it 'must delegate the validation to the assigned expiration policy' do
+        ticket.class.expiration_policy = policy
+        policy.should_receive(:ticket_valid?).with(ticket)
+        ticket.valid?
+      end
+
+      it 'must raise an error when no expiration policy is set' do
+        expect{ ticket.valid? }.to raise_error Ticket::ExpirationPolicyNotSet
+      end
+    end
   end
 end

@@ -4,6 +4,7 @@ module RubyCAS::Server::Core::Tickets
   class Ticket
     class UnknownAttributeError < StandardError; end
     class TicketPrefixNotSet < StandardError; end
+    class ExpirationPolicyNotSet < StandardError; end
 
     class << self
       # doing this as a class instance variable because class variables are evil
@@ -19,8 +20,21 @@ module RubyCAS::Server::Core::Tickets
       set_ticket_string
     end
 
+    def expiration_policy
+      self.class.expiration_policy
+    end
+
     def save
       RubyCAS::Server::Core::Persistence.save_ticket(self)
+    end
+
+    def valid?
+      if expiration_policy.present?
+        expiration_policy.ticket_valid?(self)
+      else
+        $LOG.error("No expiration policy set for #{self.class}, can't validate!")
+        raise ExpirationPolicyNotSet.new("No expiration policy set for #{self.class}")
+      end
     end
 
     protected
