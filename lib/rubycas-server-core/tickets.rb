@@ -56,14 +56,13 @@ module RubyCAS
           end
         end
 
-        def generate_proxy_ticket(target_service, pgt, client)
+        def self.generate_proxy_ticket(target_service, pgt, client)
           raise NotImplementedError
         end
 
-        def generate_proxy_granting_ticket(pgt_url, st, client)
+        def self.generate_proxy_granting_ticket(pgt_url, st, client)
           raise NotImplementedError
         end
-
       end
     end
   end

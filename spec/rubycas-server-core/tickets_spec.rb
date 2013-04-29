@@ -88,8 +88,7 @@ module RubyCAS::Server::Core
       end
     end
 
-    describe "#generate_proxy_ticket(target_service, pgt)" do
-
+    describe ".generate_proxy_ticket(target_service, pgt)" do
       it "should return a ProxyGrantingTicket" do
         pending("Proxy ticket is not implemented yet")
       end
