@@ -1,4 +1,4 @@
-module RubyCAS::Server::Core::Peristence
+module RubyCAS::Server::Core::Persistence
   # Abstract adapter class for persistence, subclass me to implment the full
   # required behavior.
   class Adapter
