@@ -1,10 +1,11 @@
 module RubyCAS::Server::Core::Persistence
-  module InMemory
-    RubyCAS::Server::Core::Persistence.register_adapter(:in_memory, self)
+  class InMemory < Adapter
+
+    register_as('in_memory')
 
     def self.setup(config_file)
       # InMemory adapter do not require any settings
-      return true
+      new
     end
   end
 end
