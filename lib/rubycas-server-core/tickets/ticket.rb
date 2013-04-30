@@ -36,6 +36,10 @@ module RubyCAS::Server::Core::Tickets
 
     attr_accessor :created_at, :id, :last_used_at, :ticket, :times_used
 
+    def self.fields
+      @fields ||= instance_methods.sort.select{|setter| setter.to_s =~ /[\w_]=+$/}.map{|setter| setter.to_s.gsub(/=$/,'')}
+    end
+
     def initialize(attributes = {})
       set_attributes(attributes)
       set_ticket_string
@@ -43,9 +47,25 @@ module RubyCAS::Server::Core::Tickets
       @times_used ||= 0
     end
 
+    def ==(other)
+      return false if self.class != other.class
+      self.ticket == other.ticket
+    end
+
+    def attributes
+      fields.reduce(HashWithIndifferentAccess.new) { |attrs, field|
+        attrs[field] = send(field)
+        attrs
+      }
+    end
+
     # retreives the expiration policy set by configs for the subclass
     def expiration_policy
       self.class.expiration_policy
+    end
+
+    def fields
+      self.class.fields
     end
 
     # Adds ease to storing tickets. Delegates actual work to the persistence

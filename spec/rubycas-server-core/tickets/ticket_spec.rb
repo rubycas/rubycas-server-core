@@ -54,6 +54,68 @@ module RubyCAS::Server::Core::Tickets
       end
     end
 
+    describe '#==(other)' do
+      let(:ticket_klass) {
+        klass = Class.new(Ticket) {
+          @ticket_prefix = 'ABC'
+        }
+      }
+      let(:ticket) {
+        ticket_klass.new
+      }
+
+      describe 'when there is a class missmatch' do
+        let(:other_ticket) {
+          klass = Class.new(Ticket) {
+            @ticket_prefix = 'ABC'
+          }
+          klass.new
+        }
+        it 'must return false' do
+          ticket.should_not == other_ticket
+        end
+      end
+
+      describe 'when the classes match' do
+        describe 'when the tickets same but have different attributes' do
+          let(:duplicate_ticket) {
+            duplicate = ticket.dup
+            duplicate.times_used = 1
+            duplicate
+          }
+
+          it 'must return true' do
+            ticket.should == duplicate_ticket
+          end
+        end
+
+        describe 'when the tickets are not the same' do
+          let(:other_ticket) { ticket_klass.new }
+
+          it 'must return false' do
+            ticket.should_not == other_ticket
+          end
+        end
+      end
+    end
+
+    describe '#attributes' do
+      let(:time) { Time.local(2013, 1, 25, 13, 25) }
+      let(:ticket) {
+        klass = Class.new(Ticket) {
+          @ticket_prefix = 'ANON'
+        }
+        klass.new({
+          last_used_at: time
+        })
+      }
+      let(:attributes) { ticket.attributes }
+
+      it 'must return a hash with all of the settable values for the class' do
+        attributes.keys.sort.should == ['created_at', 'id', 'last_used_at', 'ticket', 'times_used']
+      end
+    end
+
     describe '#save' do
       let(:ticket) {
         klass = Class.new(Ticket) {
