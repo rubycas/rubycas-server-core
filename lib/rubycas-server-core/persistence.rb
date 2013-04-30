@@ -33,6 +33,7 @@ module RubyCAS::Server::Core
     end
 
     def self.save_ticket(ticket)
+      adapter.save_ticket(ticket)
     end
 
     def self.load_login_ticket(lt_string)
