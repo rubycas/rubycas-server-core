@@ -41,11 +41,50 @@ module RubyCAS::Server::Core
       end
     end
 
-    describe '.load_ticket_granting_ticket(tgt_string)' do
-      it 'must raise an error since it will get replaced by our various implementations' do
-        expect{
-          Persistence.load_ticket_granting_ticket('TGT-ABCD')
-        }.to raise_error NotImplementedError
+    describe '.save_ticket(ticket)' do
+      let(:adapter) { double }
+      let(:id) { SecureRandom.uuid }
+
+      before do
+        Persistence.instance_variable_set(:@adapter, adapter)
+      end
+
+      describe 'when passed a LoginTicket' do
+        let(:ticket) { RubyCAS::Server::Core::Tickets::LoginTicket.new(client_hostname: 'bob') }
+
+        before do
+          adapter.should_receive(:save_login_ticket).with(ticket.attributes).and_return(id)
+          Persistence.save_ticket(ticket)
+        end
+
+        it 'must use the return value from the adapter to set the id of our ticket' do
+          ticket.id.should == id
+        end
+      end
+
+      describe 'when passed a TicketGrantingTicket' do
+        let(:ticket) { RubyCAS::Server::Core::Tickets::TicketGrantingTicket.new(client_hostname: 'bob') }
+
+        before do
+          adapter.should_receive(:save_ticket_granting_ticket).with(ticket.attributes).and_return(id)
+          Persistence.save_ticket(ticket)
+        end
+
+        it 'must use the return value from the adapter to set the id of our ticket' do
+          ticket.id.should == id
+        end
+      end
+
+      describe "when the adapter can't save the ticket" do
+        let(:ticket) { RubyCAS::Server::Core::Tickets::LoginTicket.new(client_hostname: 'bob') }
+
+        before do
+          adapter.should_receive(:save_login_ticket).with(ticket.attributes).and_return(false)
+        end
+
+        it 'must return false to indicate failure' do
+          Persistence.save_ticket(ticket).should be false
+        end
       end
     end
   end

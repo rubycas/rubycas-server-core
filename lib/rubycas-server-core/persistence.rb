@@ -32,8 +32,15 @@ module RubyCAS::Server::Core
       }
     end
 
-    def self.load_ticket_granting_ticket(tgt_string)
-      raise NotImplementedError.new('This should be overridden by your adapter of choice')
+    def self.save_ticket(ticket)
+      ticket_name = ticket.class.name.demodulize.underscore
+      id = adapter.public_send("save_#{ticket_name}", ticket.attributes)
+      if id
+        ticket.id = id
+        ticket
+      else
+        false
+      end
     end
   end
 end
