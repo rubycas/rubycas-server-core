@@ -54,6 +54,23 @@ module RubyCAS::Server::Core::Tickets
       end
     end
 
+    describe '#attributes' do
+      let(:time) { Time.local(2013, 1, 25, 13, 25) }
+      let(:ticket) {
+        klass = Class.new(Ticket) {
+          @ticket_prefix = 'ANON'
+        }
+        klass.new({
+          last_used_at: time
+        })
+      }
+      let(:attributes) { ticket.attributes }
+
+      it 'must return a hash with all of the settable values for the class' do
+        attributes.keys.sort.should == ['created_at', 'id', 'last_used_at', 'ticket', 'times_used']
+      end
+    end
+
     describe '#save' do
       let(:ticket) {
         klass = Class.new(Ticket) {

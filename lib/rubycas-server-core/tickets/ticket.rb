@@ -29,6 +29,8 @@ module RubyCAS::Server::Core::Tickets
       # Ivar for expiration policy class to delegate validation to.
       attr_accessor :expiration_policy
 
+      attr_accessor :fields
+
       # Ivar for use in generating ticket strings, gets prepended to the
       # randomly generated portion. Best set in the subclass' definition
       attr_reader :ticket_prefix
@@ -43,9 +45,21 @@ module RubyCAS::Server::Core::Tickets
       @times_used ||= 0
     end
 
+    def attributes
+      fields.reduce(HashWithIndifferentAccess.new) { |attrs, field|
+        attrs[field] = send(field)
+        attrs
+      }
+    end
+
     # retreives the expiration policy set by configs for the subclass
     def expiration_policy
       self.class.expiration_policy
+    end
+
+    def fields
+      build_fields_array unless self.class.fields.present?
+      self.class.fields
     end
 
     # Adds ease to storing tickets. Delegates actual work to the persistence
@@ -66,6 +80,13 @@ module RubyCAS::Server::Core::Tickets
     end
 
     protected
+
+    # for now we'll assume fields all the of instance variables with setters
+    def build_fields_array
+      return self.class.fields if self.class.fields.present?
+
+      self.class.fields = methods.sort.select{|setter| setter.to_s =~ /[\w_]=+$/}.map{|setter| setter.to_s.gsub(/=$/,'')}
+    end
 
     def ticket_prefix
       self.class.ticket_prefix
