@@ -1,116 +1,91 @@
 require "spec_helper"
 
-describe RubyCAS::Server::Core::Tickets do
-  before do
-   RubyCAS::Server::Core.setup("spec/config/config.yml")
-   klass = Class.new {
-      include RubyCAS::Server::Core::Tickets
-   }
-   @cas = klass.new
-   @client_hostname = "myhost.test"
-  end
+module RubyCAS::Server::Core
+  describe RubyCAS::Server::Core::Tickets do
+    let(:client_hostname) { 'myhost.test' }
+    let(:username) { 'myuser' }
+    let(:service) { 'https://myservice.test' }
 
-  Tickets = RubyCAS::Server::Core::Tickets
-
-  describe "login ticket object" do
     before do
-      @lt = @cas.generate_login_ticket(@client_hostname)
+      Persistence.stub(:save_ticket).and_return(true)
     end
 
-    it "should return a login ticket" do
-      @lt.class.should == Tickets::LoginTicket
+    describe '.generate_login_ticket(client_hostname)' do
+      let(:lt) { Tickets.generate_login_ticket(client_hostname) }
+
+      it "should set the client_hostname" do
+        lt.client_hostname.should == client_hostname
+      end
     end
 
-    it "should set the client_hostname" do
-      @lt.client_hostname.should == @client_hostname
+    describe ".generate_ticket_granting_ticket(username, extra_attributes = {})" do
+      let(:tgt) { Tickets.generate_ticket_granting_ticket(username, client_hostname) }
+
+      it "should return a TicketGrantingTicket" do
+        tgt.class.should == Tickets::TicketGrantingTicket
+      end
+
+      it "should set the tgt's ticket string" do
+        tgt.ticket.should_not be_nil
+      end
+
+      it "should generate a ticket string starting with 'TGC'" do
+        tgt.ticket.should match /^TGC/
+      end
+
+      it "should set the tgt's username string" do
+        tgt.username.should == username
+      end
+
+      it "should set the tgt's client_hostname" do
+        tgt.client_hostname.should == client_hostname
+      end
     end
 
-    it "should set the ticket string" do
-      @lt.ticket.should_not be_nil
+    describe '.ticket_granting_ticket_valid?(tgt_string)' do
+      let(:tgt_string) { 'TGT-ABCD1234' }
+      let(:tgt) { Tickets::TicketGrantingTicket.new }
+
+      it 'must satisfy our expectations' do
+        Persistence.should_receive(:load_ticket_granting_ticket).with(tgt_string).and_return(tgt)
+        tgt.should_receive(:valid?).and_return(true)
+        Tickets.ticket_granting_ticket_valid?(tgt_string)
+      end
+
+      it 'must raise an error if no ticket is specified' do
+        expect{ Tickets.ticket_granting_ticket_valid?('') }.to raise_error ArgumentError
+      end
     end
 
-    it "should set the ticket string starting with 'LT'" do
-      @lt.ticket.should match /^LT/
+    describe ".generate_service_ticket(service, tgt)" do
+      let(:tgt) {
+        tgt = Tickets.generate_ticket_granting_ticket(username, client_hostname)
+        tgt.id = rand(100_000)
+        tgt
+      }
+      let(:st) { Tickets.generate_service_ticket(service, tgt) }
+
+      it "should not include the service identifer in the ticket string" do
+        st.ticket.should_not match /#{service}/
+      end
+
+      it "should assoicate the ST with the supplied TGT" do
+        st.ticket_granting_ticket_id.should == tgt.id
+      end
     end
 
-    it "should not mark the ticket as consumed" do
-      @lt.consumed.should be_nil
-    end
-  end
+    describe ".generate_proxy_ticket(target_service, pgt)" do
+      it "should return a ProxyGrantingTicket" do
+        pending("Proxy ticket is not implemented yet")
+      end
 
-  describe "#generate_ticket_granting_ticket(username, extra_attributes = {})" do
-    before do
-      @username = 'myuser'
-      @client_hostname = "myhost.test"
-      @tgt = @cas.generate_ticket_granting_ticket(@username, @client_hostname)
-    end
+      it "should not consume the generated ticket" do
+        pending("Proxy ticket is not implemented yet")
+      end
 
-    it "should return a TicketGrantingTicket" do
-      @tgt.class.should == Tickets::TicketGrantingTicket
-    end
-
-    it "should set the tgt's ticket string" do
-      @tgt.ticket.should_not be_nil
-    end
-
-    it "should generate a ticket string starting with 'TGC'" do
-      @tgt.ticket.should match /^TGC/
-    end
-
-    it "should set the tgt's username string" do
-      @tgt.username.should == @username
-    end
-
-    it "should set the tgt's client_hostname" do
-      @tgt.client_hostname.should == @client_hostname
-    end
-
-  end
-
-  describe "#generate_service_ticket(service, username, tgt)" do
-    before do
-      @username = 'testuser'
-      @client_hostname = "myhost.test"
-      @service = 'myservice.test'
-      @tgt = @cas.generate_ticket_granting_ticket(@username, @client_hostname)
-      @st = @cas.generate_service_ticket(@service, @username, @tgt, @client_hostname)
-    end
-
-    it "should return a ServiceTicket" do
-      @st.class.should == Tickets::ServiceTicket
-    end
-
-    it "should not include the service identifer in the ticket string" do
-      @st.ticket.should_not match /#{@service}/
-    end
-
-    it "should not mark the ST as consumed" do
-      @st.consumed.should be_nil
-    end
-
-    it "must generate a ticket that starts with 'ST-'" do
-      @st.ticket.should match /^ST-/
-    end
-
-    it "should assoicate the ST with the supplied TGT" do
-      @st.ticket_granting_ticket.id.should == @tgt.id
-    end
-
-  end
-
-  describe "#generate_proxy_ticket(target_service, pgt)" do
-
-    it "should return a ProxyGrantingTicket" do
-      pending("Proxy ticket is not implemented yet")
-    end
-
-    it "should not consume the generated ticket" do
-      pending("Proxy ticket is not implemented yet")
-    end
-
-    it "should start the ticket string with PT-" do
-      pending("Proxy ticket is not implemented yet")
+      it "should start the ticket string with PT-" do
+        pending("Proxy ticket is not implemented yet")
+      end
     end
   end
-
 end
