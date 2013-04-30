@@ -1,6 +1,8 @@
 require 'active_support/core_ext/hash'
 require 'active_support/hash_with_indifferent_access'
 
+require_relative 'persistence/adapter'
+
 module RubyCAS::Server::Core
   module Persistence
     class AdapterNotRegisteredError < StandardError; end
@@ -16,9 +18,8 @@ module RubyCAS::Server::Core
       adapter_name = config.fetch(:adapter) {
         raise AdapterNotSpecifiedError.new("No adapter specified in config file!")
       }
-      adapter = adapter_named(adapter_name)
-      adapter.setup(config)
-      @adapter = adapter
+      adapter_class = adapter_named(adapter_name)
+      @adapter = adapter_class.setup(config)
     end
 
     def self.register_adapter(adapter_name, handler)

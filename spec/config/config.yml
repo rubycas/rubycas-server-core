@@ -1,7 +1,6 @@
 ##### DATABASE #################################################################
 database:
-  adapter: sqlite3
-  database: casserver_spec.db
+  adapter: in_memory
 
 #disable_auto_migrations: true
 

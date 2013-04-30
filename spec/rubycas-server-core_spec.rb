@@ -3,13 +3,7 @@ require 'spec_helper'
 describe RubyCAS::Server::Core do
 
   describe "Initialization" do
-    let(:adapter) {
-      Class.new {
-        def self.setup(config); end
-      }
-    }
     before do
-      RubyCAS::Server::Core::Persistence.register_adapter(:sqlite3, adapter)
       RubyCAS::Server::Core.setup("spec/config/config.yml")
     end
 
@@ -19,7 +13,7 @@ describe RubyCAS::Server::Core do
 
     it "Verify database settings" do
       RubyCAS::Server::Core::Settings.database.should be_kind_of(Hash)
-      RubyCAS::Server::Core::Settings.database[:adapter].should eq("sqlite3")
+      RubyCAS::Server::Core::Settings.database[:adapter].should eq("in_memory")
     end
 
     it "Verify log settings" do
