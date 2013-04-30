@@ -9,6 +9,10 @@ module RubyCAS::Server::Core
     attr_reader :adapter
     @adapters ||= HashWithIndifferentAccess.new
 
+    delegate :load_login_ticket, :load_ticket_granting_ticket, :load_service_ticket,
+             :save_login_ticket, :save_ticket_granting_ticket, :save_service_ticket,
+             to: :adapter
+
     def self.setup(config)
       adapter_name = config.fetch(:adapter) {
         raise AdapterNotSpecifiedError.new("No adapter specified in config file!")
@@ -26,10 +30,6 @@ module RubyCAS::Server::Core
       @adapters.fetch(name) {
         raise AdapterNotRegisteredError.new("No persistence adapter named #{name} has been registered, avaliable adapters are: #{@adapters.keys.join(', ')}")
       }
-    end
-
-    def self.load_ticket_granting_ticket(tgt_string)
-      raise NotImplementedError.new('This should be overridden by your adapter of choice')
     end
   end
 end

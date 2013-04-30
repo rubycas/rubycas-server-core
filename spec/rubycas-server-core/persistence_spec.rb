@@ -40,13 +40,5 @@ module RubyCAS::Server::Core
         Persistence.adapter_named(name).should eq klass
       end
     end
-
-    describe '.load_ticket_granting_ticket(tgt_string)' do
-      it 'must raise an error since it will get replaced by our various implementations' do
-        expect{
-          Persistence.load_ticket_granting_ticket('TGT-ABCD')
-        }.to raise_error NotImplementedError
-      end
-    end
   end
 end
