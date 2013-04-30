@@ -8,7 +8,10 @@ module RubyCAS::Server::Core
     class AdapterNotRegisteredError < StandardError; end
     class AdapterNotSpecifiedError < StandardError; end
 
-    attr_reader :adapter
+    class << self
+      attr_reader :adapter
+    end
+
     @adapters ||= HashWithIndifferentAccess.new
 
     def self.setup(config)
