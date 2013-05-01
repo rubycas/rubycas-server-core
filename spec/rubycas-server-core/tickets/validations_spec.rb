@@ -9,11 +9,12 @@ describe RubyCAS::Server::Core::Tickets::Validations do
    }
    @cas = klass.new
    @client_hostname = "myhost.test"
+   Tickets = RubyCAS::Server::Core::Tickets
   end
 
   describe "validate login ticket" do
     it "should validate login ticket" do
-      @lt = @cas.generate_login_ticket(@client_hostname)
+      @lt = Tickets.generate_login_ticket(@client_hostname)
       success, error = @cas.validate_login_ticket(@lt.ticket)
       success.should be_true
       error.should be_nil
@@ -24,7 +25,7 @@ describe RubyCAS::Server::Core::Tickets::Validations do
     before do
       @username = 'myuser'
       @client_hostname = "myhost.test"
-      @tgt = @cas.generate_ticket_granting_ticket(@username, @client_hostname)
+      @tgt = Tickets.generate_ticket_granting_ticket(@username, @client_hostname)
     end
 
     it "should validate ticket granting ticket" do
@@ -39,8 +40,8 @@ describe RubyCAS::Server::Core::Tickets::Validations do
       @username = 'testuser'
       @client_hostname = "myhost.test"
       @service = 'myservice.test'
-      @tgt = @cas.generate_ticket_granting_ticket(@username, @client_hostname)
-      @st = @cas.generate_service_ticket(@service, @username, @tgt, @client_hostname)
+      @tgt = Tickets.generate_ticket_granting_ticket(@username, @client_hostname)
+      @st = Tickets.generate_service_ticket(@service, @username, @tgt, @client_hostname)
     end
 
     it "should validate service ticket" do
