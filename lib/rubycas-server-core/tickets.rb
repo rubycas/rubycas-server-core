@@ -6,7 +6,7 @@ module RubyCAS
       module Tickets
 
         # One time login ticket for given client
-        def generate_login_ticket(client)
+        def self.generate_login_ticket(client)
           lt = LoginTicket.new
           lt.ticket = "LT-" + Util.random_string
           lt.client_hostname = client
@@ -24,7 +24,7 @@ module RubyCAS
         # The optional 'extra_attributes' parameter takes a hash of additional attributes
         # that will be sent along with the username in the CAS response to subsequent
         # validation requests from clients.
-        def generate_ticket_granting_ticket(username, client, extra_attributes = {})
+        def self.generate_ticket_granting_ticket(username, client, extra_attributes = {})
           tgt = TicketGrantingTicket.new
           tgt.ticket = "TGC-" + Util.random_string
           tgt.username = username
@@ -40,7 +40,7 @@ module RubyCAS
           end
         end
 
-        def generate_service_ticket(service, username, tgt, client)
+        def self.generate_service_ticket(service, username, tgt, client)
           st = ServiceTicket.new
           st.ticket = "ST-" + Util.random_string
           st.service = service
@@ -56,14 +56,13 @@ module RubyCAS
           end
         end
 
-        def generate_proxy_ticket(target_service, pgt, client)
+        def self.generate_proxy_ticket(target_service, pgt, client)
           raise NotImplementedError
         end
 
-        def generate_proxy_granting_ticket(pgt_url, st, client)
+        def self.generate_proxy_granting_ticket(pgt_url, st, client)
           raise NotImplementedError
         end
-
       end
     end
   end
