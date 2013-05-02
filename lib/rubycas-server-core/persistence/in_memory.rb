@@ -27,6 +27,12 @@ module RubyCAS::Server::Core::Persistence
         @tickets[ticket_type][attrs[:id]] = attrs
         attrs[:id]
       end
+
+      define_method "load_#{ticket_type}" do |id_or_ticket_string|
+        @tickets[ticket_type].fetch(id_or_ticket_string) {
+          raise TicketNotFoundError.new("Could not find a #{ticket_type.classify} with the ticket: #{id_or_ticket_string}")
+        }.dup
+      end
     end
   end
 end

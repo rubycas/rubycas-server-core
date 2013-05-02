@@ -3,11 +3,7 @@ require 'spec_helper'
 module RubyCAS::Server::Core::Persistence
   describe InMemory do
     let(:config) { {} }
-    let(:adapter) { RubyCAS::Server::Core::Persistence.adapter }
-
-    before(:all) do
-      RubyCAS::Server::Core::Persistence.setup({adapter: 'in_memory'})
-    end
+    let(:adapter) { InMemory.new }
 
     it 'must register it self with the persistence module' do
       RubyCAS::Server::Core::Persistence.adapter_named(described_class.adapter_name).should eq described_class
@@ -79,6 +75,56 @@ module RubyCAS::Server::Core::Persistence
 
         it 'must return the assigned id' do
           @return_value.should == id
+        end
+      end
+    end
+
+    describe '#load_login_ticket(id_or_ticket_string)' do
+      let(:ticket_string) { 'LT-123456' }
+      let(:ticket_attrs) { {ticket: ticket_string, client_hostname: 'myhost.local'} }
+
+      context 'when the ticket has been previously stored' do
+        before do
+          @id = adapter.save_login_ticket(ticket_attrs)
+        end
+
+        it "must return a hash containing the ticket's atrributes when passed the ticket string" do
+          adapter.load_login_ticket(ticket_string).should == ticket_attrs.merge(id: @id)
+        end
+
+        it "must return a hash containing the ticket's attributes when passed the id" do
+          adapter.load_login_ticket(@id).should == ticket_attrs.merge(id: @id)
+        end
+      end
+
+      context 'when the ticket has never been stored' do
+        it 'must raise Adapter::TicketNotFoundError' do
+          expect{ adapter.load_login_ticket(ticket_string) }.to raise_error Adapter::TicketNotFoundError
+        end
+      end
+    end
+
+    describe '#load_ticket_granting_ticket(ticket_string)' do
+      let(:ticket_string) { 'TGT-123456' }
+      let(:ticket_attrs) { {id: ticket_string, ticket: ticket_string, client_hostname: 'myhost.local'} }
+
+      context 'when the ticket has been previously stored' do
+        before do
+          @id = adapter.save_ticket_granting_ticket(ticket_attrs)
+        end
+
+        it "must return the a hash containing the ticket's atrributes when passed the ticket string" do
+          adapter.load_ticket_granting_ticket(ticket_string).should == ticket_attrs.merge(id: @id)
+        end
+
+        it "must return a hash containing the ticket's attributes when passed the id" do
+          adapter.load_ticket_granting_ticket(@id).should == ticket_attrs.merge(id: @id)
+        end
+      end
+
+      context 'when the ticket has never been stored' do
+        it 'must raise Adapter::TicketNotFoundError' do
+          expect{ adapter.load_ticket_granting_ticket(ticket_string) }.to raise_error Adapter::TicketNotFoundError
         end
       end
     end
