@@ -5,7 +5,7 @@ module RubyCAS::Server::Core::Tickets
     describe '#initialize' do
       it 'must prefix the ticket string with ST' do
         st = ServiceTicket.new
-        st.ticket.should match /^ST-\w+/
+        st.ticket.should match /^ST-+/
       end
     end
   end

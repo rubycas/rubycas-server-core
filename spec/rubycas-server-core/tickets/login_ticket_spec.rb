@@ -5,7 +5,7 @@ module RubyCAS::Server::Core::Tickets
     describe '#initialize(atributes)' do
       it 'should set the ticket string without input' do
         lt = LoginTicket.new
-        lt.ticket.should match /^LT-\w+/
+        lt.ticket.should match /^LT-/
       end
     end
   end
