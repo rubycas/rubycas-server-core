@@ -87,5 +87,79 @@ module RubyCAS::Server::Core
         end
       end
     end
+
+    describe '.load_login_ticket(ticket_string)' do
+      let(:client) { 'mycomputer.home' }
+      let(:id) { SecureRandom.uuid }
+      let(:ticket) { RubyCAS::Server::Core::Tickets::LoginTicket.new({id: id, client_hostname: client}) }
+      let(:adapter) { double }
+
+      before do
+        Persistence.instance_variable_set(:@adapter, adapter)
+      end
+
+      context 'for an already stored ticket' do
+        before do
+          adapter.should_receive(:load_login_ticket).with(ticket.ticket).and_return(ticket.attributes)
+          @loaded_ticket = Persistence.load_login_ticket(ticket.ticket)
+        end
+
+        it 'must return the correct ticket' do
+          @loaded_ticket.should == ticket
+        end
+
+        it 'must not return the same instance that was submitted for saving' do
+          @loaded_ticket.object_id.should_not == ticket.object_id
+        end
+      end
+
+      context 'for a ticket that is unknown to the adapter' do
+        before do
+          adapter.should_receive(:load_login_ticket).with(ticket.ticket).and_raise Persistence::Adapter::TicketNotFoundError.new('blah blah blah')
+          @loaded_ticket = Persistence.load_login_ticket(ticket.ticket)
+        end
+
+        it 'must return a NilTicket' do
+          @loaded_ticket.should be_a RubyCAS::Server::Core::Tickets::NilTicket
+        end
+      end
+    end
+
+    describe '.load_ticket_granting_ticket(ticket_string)' do
+      let(:client) { 'mycomputer.home' }
+      let(:id) { SecureRandom.uuid }
+      let(:ticket) { RubyCAS::Server::Core::Tickets::TicketGrantingTicket.new({id: id, client_hostname: client}) }
+      let(:adapter) { double }
+
+      before do
+        Persistence.instance_variable_set(:@adapter, adapter)
+      end
+
+      context 'for an already stored ticket' do
+        before do
+          adapter.should_receive(:load_ticket_granting_ticket).with(ticket.ticket).and_return(ticket.attributes)
+          @loaded_ticket = Persistence.load_ticket_granting_ticket(ticket.ticket)
+        end
+
+        it 'must return the correct ticket' do
+          @loaded_ticket.should == ticket
+        end
+
+        it 'must not return the same instance that was submitted for saving' do
+          @loaded_ticket.object_id.should_not == ticket.object_id
+        end
+      end
+
+      context 'for a ticket that is unknown to the adapter' do
+        before do
+          adapter.should_receive(:load_ticket_granting_ticket).with(ticket.ticket).and_raise Persistence::Adapter::TicketNotFoundError.new('blah blah blah')
+          @loaded_ticket = Persistence.load_ticket_granting_ticket(ticket.ticket)
+        end
+
+        it 'must return a NilTicket' do
+          @loaded_ticket.should be_a RubyCAS::Server::Core::Tickets::NilTicket
+        end
+      end
+    end
   end
 end

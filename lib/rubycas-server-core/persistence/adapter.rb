@@ -2,6 +2,11 @@ module RubyCAS::Server::Core::Persistence
   # Abstract adapter class for persistence, subclass me to implment the full
   # required behavior.
   class Adapter
+
+    # raised by an adapter implementation when an ticket requested by string or
+    # id can't be found
+    class TicketNotFoundError < StandardError; end
+
     class << self
       attr_reader :adapter_name
     end

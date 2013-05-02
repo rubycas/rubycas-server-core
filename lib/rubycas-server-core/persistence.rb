@@ -42,5 +42,20 @@ module RubyCAS::Server::Core
         false
       end
     end
+
+    class << self
+      %w{login_ticket ticket_granting_ticket}.each do |ticket|
+        klass = RubyCAS::Server::Core::Tickets.const_get(ticket.classify)
+        method_name = "load_#{ticket}"
+        define_method method_name do |id_or_ticket_string|
+          begin
+            attrs = adapter.public_send(method_name, id_or_ticket_string)
+            klass.new(attrs)
+          rescue Adapter::TicketNotFoundError
+            RubyCAS::Server::Core::Tickets::NilTicket.new
+          end
+        end
+      end
+    end
   end
 end
