@@ -15,7 +15,7 @@ module RubyCAS::Server::Core
       attr_reader :adapter
     end
 
-    @adapters ||= HashWithIndifferentAccess.new
+    @adapters ||= {}
 
     # Configures our Persistence layer
     #
@@ -33,7 +33,7 @@ module RubyCAS::Server::Core
     # @param adapter_name [Symbol, String] the name we'll find this adapter by later
     # @param handler [Adapter] Anything that quacks like an adapter should do just fine here
     def self.register_adapter(adapter_name, handler)
-      @adapters[adapter_name] = handler
+      @adapters[adapter_name.to_s] = handler
     end
 
     # Find a registered adapter class by name
@@ -43,7 +43,7 @@ module RubyCAS::Server::Core
     # @raise [AdapterNotRegisteredError] Will raise an error if the requested adapter can't be found
     #   should only happen on setup since that's the only place we should be querying for these
     def self.adapter_named(name)
-      @adapters.fetch(name) {
+      @adapters.fetch(name.to_s) {
         raise AdapterNotRegisteredError.new("No persistence adapter named #{name} has been registered, avaliable adapters are: #{@adapters.keys.join(', ')}")
       }
     end
