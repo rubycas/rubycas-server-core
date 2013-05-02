@@ -1,4 +1,4 @@
-%w{login_ticket ticket_granting_ticket service_ticket}.each do |ticket_type|
+%w{login_ticket ticket_granting_ticket service_ticket nil_ticket}.each do |ticket_type|
   require_relative "tickets/#{ticket_type}"
 end
 
