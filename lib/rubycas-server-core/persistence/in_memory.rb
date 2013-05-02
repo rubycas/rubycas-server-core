@@ -9,13 +9,24 @@ module RubyCAS::Server::Core::Persistence
     end
 
     def initialize
-      @tickets = {}
+      @tickets = Hash.new { |hash, key|
+        # set our default value to be a hash but use the block style definition
+        # so we get a different hash each time.
+        hash[key] = {}
+      }
     end
 
-    def save_ticket(ticket)
-      ticket.id ||= ticket.ticket
-      @tickets[ticket.class] ||= {}
-      @tickets[ticket.class][ticket.id] = ticket.attributes
+    %w{login_ticket ticket_granting_ticket}.each do |ticket_type|
+      define_method "#{ticket_type}s" do
+        @tickets[ticket_type].values
+      end
+
+      define_method "save_#{ticket_type}" do |ticket_attributes|
+        attrs = ticket_attributes.dup
+        attrs[:id] ||= attrs.fetch(:ticket)
+        @tickets[ticket_type][attrs[:id]] = attrs
+        attrs[:id]
+      end
     end
   end
 end
