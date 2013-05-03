@@ -1,8 +1,3 @@
-require 'active_support/core_ext/hash'
-require 'active_support/hash_with_indifferent_access'
-
-require_relative 'persistence/adapter'
-
 module RubyCAS::Server::Core
   module Persistence
     # raised when an adapter is requested by a name that's unknown to the registry
@@ -69,9 +64,12 @@ module RubyCAS::Server::Core
     end
 
     class << self
-      # @!method load_ticket_granting_ticket(ticket_string)
-      # @!method load_login_ticket(ticket_string)
+      # @!method load_ticket_granting_ticket(id_or_ticket_string)
+      # @!method load_login_ticket(id_or_ticket_string)
+      # @!method load_service_ticket(id_or_ticket_string)
       #
+      # @param id_or_ticket_string [Id, String] Accepts either the adapter's assigned id or the ticket's
+      #   ticket attribute.
       # @return Ticket when the adapter sucessfully loads a record
       # @return NilTicket when Adapter::TicketNotFoundError is thrown by the adapter
       #
@@ -80,7 +78,7 @@ module RubyCAS::Server::Core
       # The actual finding of ticket the ticket is handled by the adapter
       # which responds to the same method and returns a Hash or other class
       # that provides a key/value pair when #each is called
-      %w{login_ticket ticket_granting_ticket}.each do |ticket|
+      %w{login_ticket ticket_granting_ticket service_ticket}.each do |ticket|
         klass = RubyCAS::Server::Core::Tickets.const_get(ticket.classify)
         method_name = "load_#{ticket}"
         define_method method_name do |id_or_ticket_string|
@@ -92,6 +90,18 @@ module RubyCAS::Server::Core
           end
         end
       end
+    end
+
+    # Retreive all ServiceTickets related to the specified TicketGrantingTicket
+    #
+    # @param ticket_granting_ticket_id (ID) the id assigned to the TGT by the adapter
+    # @return [Array<ServiceTicket>]
+    # Delegates attribute retrevial to the adapter then instantiates the ticket
+    # objects from there.
+    def self.service_tickets_for(ticket_granting_ticket_id)
+      adapter.service_tickets_for(ticket_granting_ticket_id).map { |st_attrs|
+        RubyCAS::Server::Core::Tickets::ServiceTicket.new(st_attrs)
+      }
     end
   end
 end

@@ -11,7 +11,7 @@ module RubyCAS::Server::Core::Tickets
     end
 
     def service_tickets
-      raise NotImplementedError.new
+      @service_tickets ||= RubyCAS::Server::Core::Persistence.service_tickets_for(id)
     end
   end
 end

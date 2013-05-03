@@ -6,5 +6,9 @@ module RubyCAS::Server::Core::Tickets
 
     @ticket_prefix = 'ST'
 
+    def ticket_granting_ticket
+      return NilTicket.new if ticket_granting_ticket_id.nil?
+      RubyCAS::Server::Core::Persistence.load_ticket_granting_ticket(ticket_granting_ticket_id)
+    end
   end
 end

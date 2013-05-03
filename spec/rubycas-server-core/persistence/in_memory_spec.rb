@@ -79,6 +79,46 @@ module RubyCAS::Server::Core::Persistence
       end
     end
 
+    describe '#save_service_ticket' do
+      let(:tgt_id) { SecureRandom.uuid }
+      describe 'for a new ticket' do
+        let(:attrs) { {ticket: 'ST-12345', ticket_granting_ticket_id: tgt_id} }
+
+        before do
+          @return_value = adapter.save_service_ticket(attrs)
+        end
+
+        it 'must store the ticket in an accessable fashion with its id' do
+          adapter.service_tickets.should include(attrs.merge({id: @return_value}))
+        end
+
+        it 'must return the assigned id' do
+          @return_value.should_not be_nil
+        end
+
+        it 'must associate the ST with the TGT via the supplied id' do
+          adapter.service_tickets_for(tgt_id).should include attrs.merge(id: @return_value)
+        end
+      end
+
+      describe 'for a previously saved ticket' do
+        let(:id) { 'super_awesome_id' }
+        let(:attrs) { {ticket: 'TGT-12345', id: id} }
+
+        before do
+          @return_value = adapter.save_service_ticket(attrs)
+        end
+
+        it 'must store the ticket in an accessable fashion with its id' do
+          adapter.service_tickets.should include(attrs)
+        end
+
+        it 'must return the assigned id' do
+          @return_value.should == id
+        end
+      end
+    end
+
     describe '#load_login_ticket(id_or_ticket_string)' do
       let(:ticket_string) { 'LT-123456' }
       let(:ticket_attrs) { {ticket: ticket_string, client_hostname: 'myhost.local'} }
@@ -126,6 +166,19 @@ module RubyCAS::Server::Core::Persistence
         it 'must raise Adapter::TicketNotFoundError' do
           expect{ adapter.load_ticket_granting_ticket(ticket_string) }.to raise_error Adapter::TicketNotFoundError
         end
+      end
+    end
+
+    describe '#service_tickets_for(ticket_granting_ticket_id)' do
+      let(:tgt_id) { SecureRandom.uuid }
+      let(:st_attrs) { {ticket: 'ST-1234', id: 'ST-1234', ticket_granting_ticket_id: tgt_id} }
+
+      before do
+        adapter.save_service_ticket(st_attrs)
+      end
+
+      it 'must return an array containing the attribute hashes for all associated service tickets' do
+        adapter.service_tickets_for(tgt_id).should == [st_attrs]
       end
     end
   end

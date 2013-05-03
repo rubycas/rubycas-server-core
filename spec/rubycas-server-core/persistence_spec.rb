@@ -4,9 +4,11 @@ module RubyCAS::Server::Core
   describe Persistence do
     let(:name) { :awesome_adapter }
     let(:klass) { double }
+    let(:adapter) { double }
 
     before do
       Persistence.register_adapter(name, klass)
+      Persistence.instance_variable_set(:@adapter, adapter)
     end
 
     describe '.setup(config)' do
@@ -42,12 +44,7 @@ module RubyCAS::Server::Core
     end
 
     describe '.save_ticket(ticket)' do
-      let(:adapter) { double }
       let(:id) { SecureRandom.uuid }
-
-      before do
-        Persistence.instance_variable_set(:@adapter, adapter)
-      end
 
       describe 'when passed a LoginTicket' do
         let(:ticket) { RubyCAS::Server::Core::Tickets::LoginTicket.new(client_hostname: 'bob') }
@@ -92,11 +89,6 @@ module RubyCAS::Server::Core
       let(:client) { 'mycomputer.home' }
       let(:id) { SecureRandom.uuid }
       let(:ticket) { RubyCAS::Server::Core::Tickets::LoginTicket.new({id: id, client_hostname: client}) }
-      let(:adapter) { double }
-
-      before do
-        Persistence.instance_variable_set(:@adapter, adapter)
-      end
 
       context 'for an already stored ticket' do
         before do
@@ -129,11 +121,6 @@ module RubyCAS::Server::Core
       let(:client) { 'mycomputer.home' }
       let(:id) { SecureRandom.uuid }
       let(:ticket) { RubyCAS::Server::Core::Tickets::TicketGrantingTicket.new({id: id, client_hostname: client}) }
-      let(:adapter) { double }
-
-      before do
-        Persistence.instance_variable_set(:@adapter, adapter)
-      end
 
       context 'for an already stored ticket' do
         before do
@@ -159,6 +146,22 @@ module RubyCAS::Server::Core
         it 'must return a NilTicket' do
           @loaded_ticket.should be_a RubyCAS::Server::Core::Tickets::NilTicket
         end
+      end
+    end
+
+    describe '.service_tickets_for(ticket_granting_ticket_id)' do
+      let(:tgt_id) { SecureRandom.uuid }
+      let(:tgt) { RubyCAS::Server::Core::Tickets::TicketGrantingTicket.new({id: tgt_id}) }
+      let(:st_id) { SecureRandom.uuid }
+      let(:st) { RubyCAS::Server::Core::Tickets::ServiceTicket.new({id: st_id}) }
+      let(:service_tickets) { Persistence.service_tickets_for(tgt_id) }
+
+      before do
+        adapter.should_receive(:service_tickets_for).with(tgt_id).and_return([st.attributes])
+      end
+
+      it 'must return an array of ServiceTickets' do
+        service_tickets.should include st
       end
     end
   end
