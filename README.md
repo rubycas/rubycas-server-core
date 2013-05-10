@@ -15,3 +15,7 @@ The core logic for handling CAS requests independent of any particular storage o
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+### Coding conventions
+
+1. String object as a hash key for all settings from Setting class.
