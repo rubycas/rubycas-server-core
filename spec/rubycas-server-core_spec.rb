@@ -21,5 +21,9 @@ describe RubyCAS::Server::Core do
       RubyCAS::Server::Core::Settings.log[:level].should eq("INFO")
     end
 
+    it "Verify if the logger is set correctly" do
+      RubyCAS::Server::Core::Settings.log[:output].should eq("tmp/casserver.log")
+    end
+
   end
 end

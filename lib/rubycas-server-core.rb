@@ -8,8 +8,6 @@ require "rubycas-server-core/util"
 require "rubycas-server-core/tickets"
 require "rubycas-server-core/tickets/validations"
 
-$LOG = Logger.new(STDOUT)
-
 module RubyCAS
   module Server
     module Core
@@ -24,6 +22,7 @@ module RubyCAS
         Settings.load!(config_file)
         R18n.default_places = '../locales'
         R18n.set(Settings.default_locale)
+        $LOG = Logger.new(Settings.log[:output] || STDOUT)
         $LOG.level = Logger.const_get(Settings.log[:level]) || Logger::ERROR
         Database.setup(Settings.database)
       end

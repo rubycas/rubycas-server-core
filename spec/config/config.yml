@@ -8,7 +8,7 @@ database:
 ##### LOGGING ##################################################################
 
 log:
-  file: /var/log/casserver.log
+  output: tmp/casserver.log
   level: INFO
 
 
