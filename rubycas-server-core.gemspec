@@ -5,9 +5,9 @@ require 'rubycas-server-core/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "rubycas-server-core"
-  gem.version       = Rubycas::Server::Core::VERSION
-  gem.authors       = ["Robert Mitwicki"]
-  gem.email         = ["robert.mitwicki@opensoftware.pl"]
+  gem.version       = RubyCAS::Server::Core::Version::STRING
+  gem.authors       = ["Robert Mitwicki", 'Tyler Pickett']
+  gem.email         = ["robert.mitwicki@opensoftware.pl", 'tyler@therapylog.com']
   gem.description   = %q{The core logic for handling CAS requests independent of any web presentation technology.}
   gem.summary       = %q{The core logic for handling CAS requests.}
   gem.homepage      = "http://rubycas.github.com"
