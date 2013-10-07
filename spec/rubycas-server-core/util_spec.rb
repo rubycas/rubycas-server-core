@@ -22,11 +22,19 @@ describe RubyCAS::Server::Core::Util do
     it 'must return an empty string when no service url is present' do
       expect(Util.build_ticketed_url('', ticket)).to eq('')
     end
+
+    it 'must return an empty string when service url is nil' do
+      expect(Util.build_ticketed_url(nil, ticket)).to eq('')
+    end
   end
 
   describe '.clean_service_url' do
     it 'must return an empty string when an empty value is passed' do
       expect(Util.clean_service_url('')).to eq('')
+    end
+
+    it 'must return an empty string when an nil value is passed' do
+      expect(Util.clean_service_url(nil)).to eq('')
     end
 
     it 'must strip off a trailing ?' do
