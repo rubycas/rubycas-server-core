@@ -8,7 +8,7 @@ database:
 ##### LOGGING ##################################################################
 
 log:
-  output: tmp/casserver.log
+  output: log/casserver.log
   level: INFO
 
 
