@@ -1,6 +1,9 @@
+require "rubycas-server-core/error"
+
 module RubyCAS::Server::Core::Tickets
   module Validations
     include R18n::Helpers
+    include RubyCAS::Server::Core::Error
 
     # Validate login ticket
     #
@@ -17,11 +20,11 @@ module RubyCAS::Server::Core::Tickets
         if lt.consumed?
           error = t.error.login_ticket_already_used
           $LOG.warn "Login ticket '#{ticket}' already consumed!"
-        elsif not lt.expired?(RubyCAS::Server::Core::Settings.maximum_unused_service_ticket_lifetime)
+        elsif not lt.expired?(RubyCAS::Server::Core::Settings.maximum_unused_login_ticket_lifetime)
           $LOG.info "Login ticket '#{ticket}' successfully validated"
           lt.consume!
           success = true
-        elsif lt.expired?(RubyCAS::Server::Core::Settings.maximum_unused_service_ticket_lifetime)
+        elsif lt.expired?(RubyCAS::Server::Core::Settings.maximum_unused_login_ticket_lifetime)
           error = t.error.login_timeout
           $LOG.warn "Expired login ticket '#{ticket}'"
         end
@@ -38,7 +41,13 @@ module RubyCAS::Server::Core::Tickets
       $LOG.debug "No ticket granting ticket given." if ticket.nil?
 
       if tgt = TicketGrantingTicket.find_by_ticket(ticket)
-        if tgt.expired?(RubyCAS::Server::Core::Settings.maximum_session_lifetime)
+        if tgt.remember_me
+          max_lifetime = RubyCAS::Server::Core::Settings.maximum_session_lifetime
+        else
+          max_lifetime = RubyCAS::Server::Core::Settings.maximum_remember_me_lifetime
+        end
+
+        if tgt.expired?(max_lifetime)
           tgt.destroy
           error = "Your session has expired. Please log in again."
           $LOG.info "Ticket granting ticket '#{ticket}' for user '#{tgt.username}' expired."

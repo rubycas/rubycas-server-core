@@ -1,6 +1,7 @@
 require "logger"
 require "r18n-core"
 require "rubycas-server-core/version"
+require "rubycas-server-core/error"
 require "rubycas-server-core/authenticator"
 require "rubycas-server-core/settings"
 require "rubycas-server-core/database"

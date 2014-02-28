@@ -2,7 +2,7 @@ module RubyCAS
   module Server
     module Core
       module Tickets
-        class ServiceTicket < Storage
+        class ServiceTicket < RubyCAS::Server::Core::Tickets::TicketGrantingTicket
 
           attr_accessor :id, :ticket, :consumed, :client_hostname,
                         :username, :created_at, :updated_at, :proxy_granting_ticket,
