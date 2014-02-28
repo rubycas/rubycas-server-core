@@ -28,6 +28,7 @@ maximum_unused_login_ticket_lifetime: 300
 maximum_unused_service_ticket_lifetime: 300
 
 maximum_session_lifetime: 172800
+maximum_remember_me_lifetime: 604800
 downcase_username: true
 
 default_locale: en

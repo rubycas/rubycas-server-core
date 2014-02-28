@@ -1,7 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rubycas-server-core'
-require 'rubycas-server-core/adapters/in_memory'
+require 'rubycas/server/memory'
+
 begin
   require 'debugger'
 rescue LoadError

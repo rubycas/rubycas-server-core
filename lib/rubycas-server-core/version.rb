@@ -4,11 +4,10 @@ module RubyCAS
       module Version # :nodoc: all
 
         MAJOR = 0
-        MINOR = 1
-        PATCH = 0
-        TAG = 'alpha'
+        MINOR = 2
+        PATCH = 1
 
-        STRING = [MAJOR, MINOR, PATCH, TAG].join('.')
+        STRING = [MAJOR, MINOR, PATCH].join('.')
       end
     end
   end

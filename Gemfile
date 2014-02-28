@@ -17,4 +17,5 @@ end
 group :test do
   gem 'rake'
   gem 'rspec'
+  gem 'rubycas-server-memory', github: 'vasilakisfil/rubycas-server-memory'
 end
