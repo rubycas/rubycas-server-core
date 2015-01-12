@@ -5,7 +5,7 @@ module RubyCAS
         class TicketGrantingTicket < Storage
           attr_accessor :id, :ticket, :client_hostname, :username,
                         :extra_attributes, :service_tickets, :proxy_tickets,
-                        :created_at, :updated_at
+                        :remember_me, :created_at, :updated_at
 
           def initialize(tgt = {})
             @id = SecureRandom.uuid
@@ -15,6 +15,7 @@ module RubyCAS
             @extra_attributes = tgt[:extra_attributes]
             @service_tickets = tgt[:service_tickets]
             @proxy_tickets = tgt[:proxy_tickets]
+            @remember_me = tgt[:remember_me]
             @created_at = DateTime.now
             @updated_at = DateTime.now
             super()
@@ -30,6 +31,10 @@ module RubyCAS
           def expired?(max_lifetime)
             lifetime = Time.now.to_i - created_at.to_time.to_i
             lifetime > max_lifetime
+          end
+
+          def service_tickets
+            ServiceTicket
           end
         end
       end

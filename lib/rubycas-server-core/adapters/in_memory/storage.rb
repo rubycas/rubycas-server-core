@@ -16,6 +16,11 @@ module RubyCAS
             return true
           end
 
+          def save!
+            self.class.storage[@id] = self
+            return true
+          end
+
         end
       end
     end

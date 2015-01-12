@@ -10,7 +10,7 @@ module RubyCAS
           lt = LoginTicket.new
           lt.ticket = "LT-" + Util.random_string
           lt.client_hostname = client
-          if lt.save
+          if lt.save!
             $LOG.debug("Login ticket '#{lt.ticket} has been created for '#{lt.client_hostname}'")
             return lt
           else
@@ -24,13 +24,19 @@ module RubyCAS
         # The optional 'extra_attributes' parameter takes a hash of additional attributes
         # that will be sent along with the username in the CAS response to subsequent
         # validation requests from clients.
-        def self.generate_ticket_granting_ticket(username, client, extra_attributes = {})
+        def self.generate_ticket_granting_ticket(
+          username,
+          client,
+          remember_me = false,
+          extra_attributes = {}
+        )
           tgt = TicketGrantingTicket.new
           tgt.ticket = "TGC-" + Util.random_string
           tgt.username = username
-          tgt.extra_attributes = extra_attributes
+          tgt.remember_me = remember_me
+          tgt.extra_attributes = extra_attributes.to_s
           tgt.client_hostname = client
-          if tgt.save
+          if tgt.save!
             $LOG.debug("Generated ticket granting ticket '#{tgt.ticket}' for user" +
               " '#{tgt.username}' at '#{tgt.client_hostname}'" +
               (extra_attributes.empty? ? "" : " with extra attributes #{extra_attributes.inspect}"))
@@ -41,7 +47,7 @@ module RubyCAS
         end
 
         def self.generate_service_ticket(service, username, tgt, client)
-          st = ServiceTicket.new
+          st = tgt.service_tickets.new
           st.ticket = "ST-" + Util.random_string
           st.service = service
           st.username = username
