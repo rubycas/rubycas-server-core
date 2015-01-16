@@ -16,7 +16,7 @@ describe RubyCAS::Server::Core::Tickets::Validations do
     it "should validate login ticket" do
       @lt = Tickets.generate_login_ticket(@client_hostname)
       success, error = @cas.validate_login_ticket(@lt.ticket)
-      success.should be_true
+      success.should be_truthy
       error.should be_nil
     end
   end
@@ -30,7 +30,7 @@ describe RubyCAS::Server::Core::Tickets::Validations do
 
     it "should validate ticket granting ticket" do
       success, error = @cas.validate_ticket_granting_ticket(@tgt.ticket)
-      success.should be_true
+      success.should be_truthy
       error.should be_nil
     end
   end
@@ -46,7 +46,7 @@ describe RubyCAS::Server::Core::Tickets::Validations do
 
     it "should validate service ticket" do
       success, error = @cas.validate_service_ticket(@service, @st.ticket)
-      success.should be_true
+      success.should be_truthy
       error.should be_nil
     end
   end
