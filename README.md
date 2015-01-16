@@ -6,7 +6,7 @@ The core logic for handling CAS requests independent of any particular storage o
 
 ## Requirements
 
-* ruby 1.9.x
+* ruby 2.1.x
 
 ## Contributing
 
