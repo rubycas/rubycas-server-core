@@ -91,14 +91,17 @@ module RubyCAS::Server::Core
     describe ".generate_proxy_ticket(target_service, pgt)" do
       it "should return a ProxyGrantingTicket" do
         pending("Proxy ticket is not implemented yet")
+        fail
       end
 
       it "should not consume the generated ticket" do
         pending("Proxy ticket is not implemented yet")
+        fail
       end
 
       it "should start the ticket string with PT-" do
         pending("Proxy ticket is not implemented yet")
+        fail
       end
     end
   end

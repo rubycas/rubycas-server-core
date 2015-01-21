@@ -3,4 +3,5 @@ bundler_args: --without development
 rvm:
   - rbx-19mode
   - jruby-19mode
-  - 1.9.3
+  - 2.1.5
+env: JRUBY_OPTS=--2.0

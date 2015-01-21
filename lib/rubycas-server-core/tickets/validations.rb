@@ -4,7 +4,7 @@ module RubyCAS::Server::Core::Tickets
 
     # Validate login ticket
     #
-    # Returned [succes, error_message]
+    # Returned [success, error_message]
     def validate_login_ticket(ticket)
       $LOG.debug "Validating login ticket '#{ticket}'"
       success = false
@@ -55,6 +55,8 @@ module RubyCAS::Server::Core::Tickets
 
     def validate_service_ticket(service, ticket, allow_proxy_tickets = false)
       $LOG.debug "Validating service/proxy ticket '#{ticket}' for service '#{service}'"
+      success = false
+      error = nil
 
       if service.nil? or ticket.nil?
         error = Error.new(:INVALID_REQUEST, "Ticket or service parameter was missing in the request.")
@@ -74,6 +76,8 @@ module RubyCAS::Server::Core::Tickets
             " but the requested service '#{service}' does not match the service '#{st.service}' associated with this ticket.")
           $LOG.warn "#{error.code} - #{error.message}"
         else
+          st.consume!
+          success = true
           $LOG.info("Ticket '#{ticket}' for service '#{service}' for user '#{st.username}' successfully validated.")
         end
       else
@@ -81,12 +85,7 @@ module RubyCAS::Server::Core::Tickets
         $LOG.warn("#{error.code} - #{error.message}")
       end
 
-      if st
-        st.consume!
-      end
-
-
-      [st, error]
+      return [success, error]
     end
 
     def validate_proxy_ticket(service, ticket)

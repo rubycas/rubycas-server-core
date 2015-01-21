@@ -5,7 +5,7 @@ group :development do
   # for gems that are nice in development
   # but don't break the build when missing
   # Example: debugger
-  gem 'debugger'
+  gem 'byebug'
   gem "guard"
   gem "guard-rspec"
 
