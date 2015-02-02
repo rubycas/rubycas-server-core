@@ -1,12 +1,59 @@
 rubycas-server-core
 ===================
-[![Build Status](https://travis-ci.org/rubycas/rubycas-server-core.png)](https://travis-ci.org/rubycas/rubycas-server-core)
-The core logic for handling CAS requests independent of any particular storage or web presentation technology.
+[![Circle CI](https://circleci.com/gh/vasilakisfil/rubycas-server-core.svg?style=svg)](https://circleci.com/gh/vasilakisfil/rubycas-server-core)
 
+The core logic for handling CAS requests independent of any particular storage or web presentation technology.
 
 ## Requirements
 
 * ruby 2.1.x
+
+## Adapters
+Currently available adapters are:
+* [rubycas-server-activerecord](https://github.com/kollegorna/rubycas-server-activerecord)
+* [rubycas-server-memory](https://github.com/vasilakisfil/rubycas-server-memory)
+
+If you want to create a new adapter check these 2 adapters how they are implemented. Essentially you need to implement the following methods for each ticket:
+
+```ruby
+
+class XXXTicket
+  def initialize(options = {})
+  end
+  
+  #deprecated
+  def self.find_by_ticket(ticket)
+    #returns the ticket based on the ticket id
+    #it will be removed soon
+  end
+  
+  def self.find_by(opts = {})
+    #returns the ticket based on the constraints in the hash (activerecord-style)
+  end
+  
+  def save!
+    #saves the ticket in the storage
+    #throws an exception in case of an error
+  end
+  
+  def save
+    #saves the ticket in the storage
+  end
+
+  def consumed?
+    #returns true if ticket is already consumed
+  end
+
+  def consume!
+    #consumes the ticket
+  end
+
+  def expired?(max_lifetime = 100)
+    #checks if the ticket is already expired
+  end
+
+end
+```
 
 ## Contributing
 

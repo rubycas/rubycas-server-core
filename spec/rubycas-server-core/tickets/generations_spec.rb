@@ -1,42 +1,46 @@
 require "spec_helper"
 
 module RubyCAS::Server::Core::Tickets
-  describe RubyCAS::Server::Core::Tickets do
+  describe RubyCAS::Server::Core::Tickets::Generations do
     let(:client_hostname) { 'myhost.test' }
     let(:username) { 'myuser' }
     let(:service) { 'https://myservice.test' }
 
     before do
       RubyCAS::Server::Core.setup("spec/config/config.yml")
+      @generations = Class.new
+      @generations.extend(RubyCAS::Server::Core::Tickets::Generations)
     end
 
-    describe LT do
-      let(:lt) { LT.create!(client_hostname) }
+    describe '.generate_login_ticket(client_hostname)' do
+      before do
+        @lt = @generations.generate_login_ticket(client_hostname)
+      end
 
       it "should return a login ticket" do
-        lt.class.should == LoginTicket
+        @lt.class.should == LoginTicket
       end
 
       it "should set the client_hostname" do
-        lt.client_hostname.should == client_hostname
+        @lt.client_hostname.should == client_hostname
       end
 
       it "should set the ticket string" do
-        lt.ticket.should_not be_nil
+        @lt.ticket.should_not be_nil
       end
 
       it "should set the ticket string starting with 'LT'" do
-        lt.ticket.should(match(/^LT/))
+        @lt.ticket.should(match(/^LT/))
       end
 
       it "should not mark the ticket as consumed" do
-        lt.consumed.should be_nil
+        @lt.consumed.should be_nil
       end
     end
 
-    describe TGT do
+    describe ".generate_ticket_granting_ticket(username, extra_attributes = {})" do
       before do
-        @tgt = TGT.create!(username, client_hostname)
+        @tgt = @generations.generate_ticket_granting_ticket(username, client_hostname)
       end
 
       it "should return a TicketGrantingTicket" do
@@ -60,28 +64,30 @@ module RubyCAS::Server::Core::Tickets
       end
     end
 
-    describe ST do
-      let(:tgt) { TGT.create!(username, client_hostname) }
-      let(:st) { ST.create!(service, username, tgt, client_hostname) }
+    describe ".generate_service_ticket(service, username, tgt)" do
+      before do
+        @tgt = @generations.generate_ticket_granting_ticket(username, client_hostname)
+        @st = @generations.generate_service_ticket(service, username, @tgt, client_hostname)
+      end
 
       it "should return a ServiceTicket" do
-        st.class.should == ServiceTicket
+        @st.class.should == ServiceTicket
       end
 
       it "should not include the service identifer in the ticket string" do
-        st.ticket.should_not(match(/#{service}/))
+        @st.ticket.should_not(match(/#{service}/))
       end
 
       it "should not mark the ST as consumed" do
-        st.consumed.should be_nil
+        @st.consumed.should be_nil
       end
 
       it "must generate a ticket that starts with 'ST-'" do
-        st.ticket.should(match(/^ST-/))
+        @st.ticket.should(match(/^ST-/))
       end
 
       it "should assoicate the ST with the supplied TGT" do
-        st.ticket_granting_ticket.id.should == tgt.id
+        @st.ticket_granting_ticket.id.should == @tgt.id
       end
     end
 
@@ -100,3 +106,4 @@ module RubyCAS::Server::Core::Tickets
     end
   end
 end
+

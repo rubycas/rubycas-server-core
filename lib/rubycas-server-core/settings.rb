@@ -11,9 +11,13 @@ module RubyCAS
         @_settings = HashWithIndifferentAccess.new
         attr_reader :_settings
 
-        def load!(file_name)
-          config = YAML::load_file(file_name).with_indifferent_access
-          @_settings.merge!(config)
+        def load!(config)
+
+          if config.is_a? String
+            @_settings.merge! YAML::load_file(config).with_indifferent_access
+          elsif config.is_a? Hash
+            @_settings.merge!(config)
+          end
         end
 
         def method_missing(name, *args, &block)
